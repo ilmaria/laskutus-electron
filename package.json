@@ -1,0 +1,11 @@
+{
+  "name": "laskutus-js",
+  "version": "1.0.0",
+  "author": "Ilmari Autio",
+  "main": "main.js",
+  "dependencies": {
+    "jszip": "^3.0.0",
+    "pdfkit": "^0.7.2",
+    "xlsx": "^0.8.0"
+  }
+}
