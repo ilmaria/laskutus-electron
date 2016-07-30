@@ -1,5 +1,6 @@
 const PDFDocument = require('pdfkit')
 const fs = require('fs')
+const BlobStream = require('blob-stream')
 
 try {
   fs.accessSync('./laskut', fs.F_OK)
@@ -12,7 +13,7 @@ module.exports = createPdf
 function createPdf(fields, idx) {
   let doc = new PDFDocument()
   
-  const stream //= doc.pipe(fs.createWriteStream(`./laskut/file${idx}.pdf`))
+  const stream = doc.pipe(new BlobStream())
   const {
     nimi, osoite, postitoimipaikka,
     päiväys, laskunumero, eräpäivä,
@@ -73,8 +74,9 @@ function createPdf(fields, idx) {
   doc.end()
 
   stream.on('finish', () => {
+    let url = stream.toBlobURL()
     let iframe = document.createElement('webview')
-    iframe.src = 'file.pdf'
+    iframe.src = `./pdfjs/web/viewer.html?file=${url}`
     iframe.style = 'display:inline-flex; width:640px; height:480px'
     document.body.appendChild(iframe)
   })

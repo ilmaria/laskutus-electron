@@ -12,6 +12,6 @@ const fields = {
   viivästyskorko: '7.5%'
 };
 
-for (let i = 0; i < 600; i++) {
+for (let i = 0; i < 5; i++) {
   createPdf(fields, i);
 }
