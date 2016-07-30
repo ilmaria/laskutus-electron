@@ -12,7 +12,7 @@ module.exports = createPdf
 function createPdf(fields, idx) {
   let doc = new PDFDocument()
   
-  const stream = doc.pipe(fs.createWriteStream(`./laskut/file${idx}.pdf`))
+  const stream //= doc.pipe(fs.createWriteStream(`./laskut/file${idx}.pdf`))
   const {
     nimi, osoite, postitoimipaikka,
     päiväys, laskunumero, eräpäivä,
