@@ -76,7 +76,7 @@ function createPdf(fields, idx) {
   stream.on('finish', () => {
     let url = stream.toBlobURL()
     let iframe = document.createElement('webview')
-    iframe.src = `./pdfjs/web/viewer.html?file=${url}`
+    iframe.src = `../pdfjs/web/viewer.html?file=${url}`
     iframe.style = 'display:inline-flex; width:640px; height:480px'
     document.body.appendChild(iframe)
   })

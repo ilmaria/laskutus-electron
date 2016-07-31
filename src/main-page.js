@@ -1,4 +1,4 @@
-const createPdf = require('./src/pdf-writer.js');
+const createPdf = require('./pdf-writer.js');
 
 const fields = {
   nimi: 'ilmari autio',

@@ -1,6 +1,7 @@
 const electron = require('electron');
-const {app, BrowserWindow} = electron;
+const { app, BrowserWindow } = electron;
 const Config = require('electron-config');
+const chokidar = require('chokidar');
 
 const config = new Config({ defaults: {
   window: {
@@ -8,22 +9,22 @@ const config = new Config({ defaults: {
     height: 1200
   }
 }});
-let win;
+let window;
 
 function createWindow() {
-  win = new BrowserWindow({
+  window = new BrowserWindow({
     width: config.get('window.width'),
     height: config.get('window.height'),
     x: config.get('window.x'),
     y: config.get('window.y')
   });
 
-  win.loadURL(`file://${__dirname}/index.html`);
+  window.loadURL(`file://${__dirname}/src/index.html`);
 
-  win.webContents.openDevTools();
+  window.webContents.openDevTools();
 
-  win.on('close', () => {
-    const window = win.getBounds();
+  window.on('close', () => {
+    const window = window.getBounds();
 
     config.set('window.x', window.x);
     config.set('window.y', window.y);
@@ -31,10 +32,17 @@ function createWindow() {
     config.set('window.width', window.width);
   });
 
-  win.on('closed', () => {
-    win = null;
+  window.on('closed', () => {
+    window = null;
   });
 }
+
+chokidar.watch(['ports.js', 'index.html', 'elm.js'])
+  .on('change', () => {
+    if (window) {
+      window.reload();
+    }
+  })
 
 app.on('ready', createWindow);
 
@@ -45,7 +53,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (win === null) {
+  if (window === null) {
     createWindow();
   }
 });
