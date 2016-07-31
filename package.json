@@ -2,9 +2,10 @@
   "name": "laskutus-js",
   "version": "1.0.0",
   "author": "Ilmari Autio",
-  "main": "main.js",
+  "main": "app.js",
   "dependencies": {
     "blob-stream": "^0.1.3",
+    "electron-config": "^0.2.1",
     "jszip": "^3.0.0",
     "pdfjs-dist": "^1.5.365",
     "pdfkit": "^0.7.2",
