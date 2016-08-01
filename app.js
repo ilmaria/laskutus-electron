@@ -24,12 +24,12 @@ function createWindow() {
   window.webContents.openDevTools();
 
   window.on('close', () => {
-    const window = window.getBounds();
+    const win = window.getBounds();
 
-    config.set('window.x', window.x);
-    config.set('window.y', window.y);
-    config.set('window.height', window.height);
-    config.set('window.width', window.width);
+    config.set('window.x', win.x);
+    config.set('window.y', win.y);
+    config.set('window.height', win.height);
+    config.set('window.width', win.width);
   });
 
   window.on('closed', () => {
@@ -37,7 +37,7 @@ function createWindow() {
   });
 }
 
-chokidar.watch(['ports.js', 'index.html', 'elm.js'])
+chokidar.watch(['./src/ports.js', './src/index.html', './src/elm.js'])
   .on('change', () => {
     if (window) {
       window.reload();
