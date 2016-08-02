@@ -37,7 +37,7 @@ function createWindow() {
   });
 }
 
-chokidar.watch(['./src/ports.js', './src/index.html', './src/elm.js'])
+chokidar.watch(['./src/**/*'])
   .on('change', () => {
     if (window) {
       window.reload();
