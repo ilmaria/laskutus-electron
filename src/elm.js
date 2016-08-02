@@ -7255,8 +7255,121 @@ var _elm_lang$html$Html$summary = _elm_lang$html$Html$node('summary');
 var _elm_lang$html$Html$menuitem = _elm_lang$html$Html$node('menuitem');
 var _elm_lang$html$Html$menu = _elm_lang$html$Html$node('menu');
 
+var _elm_lang$html$Html_App$programWithFlags = _elm_lang$virtual_dom$VirtualDom$programWithFlags;
+var _elm_lang$html$Html_App$program = function (app) {
+	return _elm_lang$html$Html_App$programWithFlags(
+		_elm_lang$core$Native_Utils.update(
+			app,
+			{
+				init: function (_p0) {
+					return app.init;
+				}
+			}));
+};
+var _elm_lang$html$Html_App$beginnerProgram = function (_p1) {
+	var _p2 = _p1;
+	return _elm_lang$html$Html_App$programWithFlags(
+		{
+			init: function (_p3) {
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_p2.model,
+					_elm_lang$core$Native_List.fromArray(
+						[]));
+			},
+			update: F2(
+				function (msg, model) {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						A2(_p2.update, msg, model),
+						_elm_lang$core$Native_List.fromArray(
+							[]));
+				}),
+			view: _p2.view,
+			subscriptions: function (_p4) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		});
+};
+var _elm_lang$html$Html_App$map = _elm_lang$virtual_dom$VirtualDom$map;
+
+var _user$project$ClientRegister$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$ClientRegister$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('client register')
+			]));
+};
+var _user$project$ClientRegister$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$ClientRegister$Model = function (a) {
+	return {section: a};
+};
+var _user$project$ClientRegister$Invoices = {ctor: 'Invoices'};
+var _user$project$ClientRegister$Archive = {ctor: 'Archive'};
+var _user$project$ClientRegister$ClientRegister = {ctor: 'ClientRegister'};
+var _user$project$ClientRegister$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$ClientRegister$Model(_user$project$ClientRegister$ClientRegister),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$ClientRegister$ChangeSection = function (a) {
+	return {ctor: 'ChangeSection', _0: a};
+};
+
+var _user$project$Section$Section = F3(
+	function (a, b, c) {
+		return {model: a, view: b, update: c};
+	});
+var _user$project$Section$ClientRegisterModel = function (a) {
+	return {ctor: 'ClientRegisterModel', _0: a};
+};
+var _user$project$Section$ClientRegisterMsg = function (a) {
+	return {ctor: 'ClientRegisterMsg', _0: a};
+};
+
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$Main$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('main module')
+			]));
+};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Main$Model = function (a) {
+	return {section: a};
+};
+var _user$project$Main$Invoices = {ctor: 'Invoices'};
+var _user$project$Main$Archive = {ctor: 'Archive'};
+var _user$project$Main$ClientRegister = {ctor: 'ClientRegister'};
+var _user$project$Main$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$Main$Model(_user$project$Main$ClientRegister),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
 var _user$project$Main$main = {
-	main: _elm_lang$html$Html$text('hello world')
+	main: _elm_lang$html$Html_App$program(
+		{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})
+};
+var _user$project$Main$ChangeSection = function (a) {
+	return {ctor: 'ChangeSection', _0: a};
 };
 
 var Elm = {};
