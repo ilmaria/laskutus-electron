@@ -1,14 +1,8 @@
 const electron = require('electron');
 const { app, BrowserWindow } = electron;
-const Config = require('electron-config');
+const config = require('./config');
 const chokidar = require('chokidar');
 
-const config = new Config({ defaults: {
-  window: {
-    width: 1600,
-    height: 1200
-  }
-}});
 let window;
 
 function createWindow() {
@@ -19,7 +13,7 @@ function createWindow() {
     y: config.get('window.y')
   });
 
-  window.loadURL(`file://${__dirname}/src/index.html`);
+  window.loadURL(`file://${__dirname}/../renderer-process/index.html`);
 
   window.webContents.openDevTools();
 
@@ -37,7 +31,7 @@ function createWindow() {
   });
 }
 
-chokidar.watch(['./src/**/*'])
+chokidar.watch(['./renderer-process/**/*'])
   .on('change', () => {
     if (window) {
       window.reload();
