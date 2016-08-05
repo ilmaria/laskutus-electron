@@ -1,0 +1,22 @@
+{
+  "name": "laskutus-js",
+  "description": "",
+  "main": "main-process/main.js",
+  "authors": [
+    "Ilmari Autio"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "^1.6.1",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "app-elements": "PolymerElements/app-elements#^0.10.0"
+  }
+}

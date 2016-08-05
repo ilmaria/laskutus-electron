@@ -7,33 +7,62 @@
     
     <title>Laskutus.js</title>
     <meta name="description" content="Laskujen luonti.">
-    
-    <!--stylesheets-->
-    <link rel="stylesheet" href="css/basscss.css">
-    <link rel="stylesheet" href="css/main.css">
+
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script>
+      window.Polymer = {
+        dom: 'shadow'
+      };
+    </script>
+
+    <!--html import-->
+    <link rel="import" href="../bower_components/app-layout/app-layout.html">
+
+    <link rel="import" href="../bower_components/app-route/app-route.html">
+    <link rel="import" href="../bower_components/app-route/app-location.html">
+
+    <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+    <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+
+    <link rel="import" href="client-register/client-register.html">
+    <link rel="import" href="invoices/invoices.html">
+    <link rel="import" href="archive/archive.html">
     
   </head>
   
-  <body class="flex fit-vertical m0">
+  <body>
+    <template is="dom-bind">
 
-    <nav>
-      <ul>
-        <li>
-          <a href="#client-register">Asiakas rekisteri</a>
-        </li>
-        <li>
-          <a href="#invoices">Laskut</a>
-        </li>
-        <li>
-          <a href="#archive">Arkisto</a>
-        </li>
-      </ul>
-    </nav>
-    
-    <main class="flex-auto">
-    </main>
+      <!--routing-->
+      <app-location route="{{route}}"></app-location>
+      <app-route route="{{route}}"></app-route>
 
-    <script src="router.js"></script>
+      <!--app layout-->
+      <app-drawer-layout fullbleed>
 
+        <!--nav menu-->
+        <app-drawer opened>
+          <nav>
+            <iron-selector selected="[[route.path]]" attr-for-selected="href">
+              <a href="/client-register">Asiakas rekisteri</a>
+              <a href="/invoices">Laskut</a>
+              <a href="/archive">Arkisto</a>
+            </iron-selector>
+          </nav>
+        </app-drawer>
+
+        <!--page content-->
+        <main>
+          <iron-pages selected="[[route.path]]" attr-for-selected="data-path">
+            <client-register data-path="/client-register"></client-register>
+            <invoices data-path="/invoices"></invoices>
+            <archive data-path="/archive"></archive>
+          </iron-pages>
+        </main>
+
+      </app-drawer-layout>
+
+    </template>
   </body>
 </html>
