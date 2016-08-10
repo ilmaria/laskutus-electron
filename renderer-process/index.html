@@ -8,26 +8,41 @@
     <title>Laskutus.js</title>
     <meta name="description" content="Laskujen luonti.">
 
-    <script src="../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
     <script>
       window.Polymer = {
-        dom: 'shadow'
+        dom: 'shadow',
+        useNativeCSSProperties: true
       };
+      
+      if (window.location.hash === '') {
+        window.location.href += '#client-register';
+      }
     </script>
 
     <!--html import-->
+    <link rel="import" href="../bower_components/polymer/polymer.html">
+    
     <link rel="import" href="../bower_components/app-layout/app-layout.html">
 
     <link rel="import" href="../bower_components/app-route/app-route.html">
     <link rel="import" href="../bower_components/app-route/app-location.html">
+    
+    <link rel="import" href="../bower_components/paper-item/paper-item.html">
 
     <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-    <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
     <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 
     <link rel="import" href="client-register/client-register.html">
     <link rel="import" href="invoices/invoices.html">
     <link rel="import" href="archive/archive.html">
+    
+    <!--custom styles-->    
+    <link rel="import" href="css/main-styles.html">
+    <link rel="import" href="css/basscss.html">
+    <style is="custom-style"
+           include="main-styles basscss iron-flex">
+    </style>
     
   </head>
   
@@ -35,7 +50,7 @@
     <template is="dom-bind">
 
       <!--routing-->
-      <app-location route="{{route}}"></app-location>
+      <app-location route="{{route}}" use-hash-as-path></app-location>
       <app-route route="{{route}}"></app-route>
 
       <!--app layout-->
@@ -44,10 +59,18 @@
         <!--nav menu-->
         <app-drawer opened>
           <nav>
-            <iron-selector selected="[[route.path]]" attr-for-selected="href">
-              <a href="/client-register">Asiakas rekisteri</a>
-              <a href="/invoices">Laskut</a>
-              <a href="/archive">Arkisto</a>
+            <iron-selector
+                  class="layout vertical"
+                  selected="0">
+              <a href="#client-register">
+                <paper-item>Asiakas rekisteri</paper-item>
+              </a>
+              <a href="#invoices">
+                <paper-item>Laskut</paper-item>
+              </a>
+              <a href="#archive">
+                <paper-item>Arkisto</paper-item>
+              </a>
             </iron-selector>
           </nav>
         </app-drawer>
@@ -55,9 +78,9 @@
         <!--page content-->
         <main>
           <iron-pages selected="[[route.path]]" attr-for-selected="data-path">
-            <client-register data-path="/client-register"></client-register>
-            <invoices data-path="/invoices"></invoices>
-            <archive data-path="/archive"></archive>
+            <x-client-register data-path="client-register"></x-client-register>
+            <x-invoices data-path="invoices"></x-invoices>
+            <x-archive data-path="archive"></x-archive>
           </iron-pages>
         </main>
 

@@ -1,9 +1,14 @@
-<link rel="import" href="data-grid.html">
+<link rel="import" href="../css/basscss.html">
 
-<template>
-  <div>Et ole valinnut rekisteriä</div>
+<dom-module is="x-client-register">
+  <template>
+    <style is="custom-style" include="basscss"></style>
+    
+    <div class="h2">Et ole valinnut rekisteriä</div>
 
-  <input type="file" id="select-register-btn">Valitse rekisteri</input>
+    <input type="file" id="select-register-btn">Valitse rekisteri</input>
 
-  <script src="client-register/client-register.js"></script>
-</template>
+  </template>
+
+  <script src="client-register.js"></script>
+</dom-module>

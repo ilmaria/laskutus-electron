@@ -9,7 +9,6 @@
     "jszip": "^3.0.0",
     "pdfjs-dist": "^1.5.365",
     "pdfkit": "^0.7.2",
-    "slickgrid-6pac": "^2.2.9",
     "xlsx": "^0.8.0"
   },
   "devDependencies": {

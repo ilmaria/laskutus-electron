@@ -1,4 +1,8 @@
 (function () {
+  Polymer({
+    is: 'x-client-register'
+  });
+  
   const { remote } = require('electron');
   const fs = require('fs');
   const config = remote.require('./config');
@@ -22,7 +26,7 @@
         renderRegister(register);
       }
     });
-  
+    
   function importRegister(register) {
     const workbook = xlxs.readFile(register);
     const firstSheet = workbook.SheetNames[0];
