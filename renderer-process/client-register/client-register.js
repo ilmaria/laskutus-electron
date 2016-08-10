@@ -1,6 +1,7 @@
 (function () {
   Polymer({
-    is: 'x-client-register'
+    is: 'x-client-register',
+    ready: addFileSelection
   });
   
   const { remote } = require('electron');
@@ -16,17 +17,19 @@
       renderRegister(register);
     }
   });
-
-  document.querySelector('#select-register-btn')
-    .addEventListener('change', (event) => {
+  
+  function addFileSelection() {
+    this.$['select-register-btn'].addEventListener('change', (event) => {
       const file = event.target.files[0];
       
       if (file) {
         const register = importRegister(file.path);
-        renderRegister(register);
+        const table = this.$['register-table'];
+        renderToTable(table, register);
       }
     });
-    
+  }
+
   function importRegister(register) {
     const workbook = xlxs.readFile(register);
     const firstSheet = workbook.SheetNames[0];
@@ -34,9 +37,10 @@
     return worksheet;
   }
 
-  function renderRegister(worksheet) {
+  function renderToTable(table, worksheet) {
     const range = xlxs.utils.decode_range(worksheet['!ref']);
     const register = xlxs.utils.sheet_to_json(worksheet);
+    /*
     let headers = [];
     
     const startIdx = range.s.c;
@@ -47,7 +51,11 @@
       const cell = worksheet[{c: i, r: headerRow}];
       headers.push(cell.v);
     }
-
-    const frag = document.createDocumentFragment();
+    */
+    table.columns = [
+      { name: 'nimi' },
+      { name: 'lähiosoite'}
+    ];
+    table.items = register;
   }
 })();

@@ -17,6 +17,7 @@
     "polymer": "^1.6.1",
     "iron-elements": "PolymerElements/iron-elements#^1.0.10",
     "paper-elements": "PolymerElements/paper-elements#^1.0.7",
-    "app-elements": "PolymerElements/app-elements#^0.10.0"
+    "app-elements": "PolymerElements/app-elements#^0.10.0",
+    "vaadin-grid": "^1.1.1"
   }
 }
