@@ -1,5 +1,5 @@
 (function () {
-  const { remote } = require('electron');
+  const { remote, ipcRenderer } = require('electron');
   const fs = require('fs');
   const config = remote.require('./config');
   const xlxs = require('xlsx');
@@ -10,7 +10,7 @@
   });
 
   function addFileSelection() {
-    const table = this.$['register-table'];
+    const grid = this.$['register-table'];
     const registerFile = config.get('registerFile');
 
     this.$['select-register-btn'].addEventListener('change', (event) => {
@@ -18,15 +18,24 @@
       
       if (file) {
         const register = importRegister(file.path);
-        renderToTable(table, register);
+        renderToGrid(grid, register);
         config.set('registerFile', file.path);
+      }
+    });
+
+    grid.addEventListener('selected-items-changed', () => {
+      const clientIndex = grid.selection.selected()[0];
+      const client = grid.items[clientIndex];
+
+      if (client) {
+        ipcRenderer.send('invoice-preview', client);
       }
     });
 
     fs.access(registerFile, fs.F_OK, (err) => {
       if (!err) {
         const register = importRegister(registerFile);
-        renderToTable(table, register);
+        renderToGrid(grid, register);
       }
     });
   }
@@ -38,7 +47,7 @@
     return worksheet;
   }
 
-  function renderToTable(table, worksheet) {
+  function renderToGrid(grid, worksheet) {
     const range = xlxs.utils.decode_range(worksheet['!ref']);
     const register = xlxs.utils.sheet_to_json(worksheet);
     let columns = [];
@@ -56,7 +65,7 @@
       columns.push({ name: cell.v });
     }
     
-    table.columns = columns;
-    table.items = register;
+    grid.columns = columns;
+    grid.items = register;
   }
 })();

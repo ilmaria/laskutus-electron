@@ -1,7 +1,8 @@
 const electron = require('electron');
-const { app, BrowserWindow } = electron;
+const { app, BrowserWindow, ipcMain } = electron;
 const config = require('./config');
 const chokidar = require('chokidar');
+const invoicePreview = require('./invoice-preview');
 
 let window;
 
@@ -30,6 +31,13 @@ function createWindow() {
     window = null;
   });
 }
+
+ipcMain.on('invoice-preview', (event, args) => {
+  invoicePreview(args).then((url) => {
+    let previewWindow = new BrowserWindow({parent: window, show: true});
+    previewWindow.loadURL(url);
+  })
+});
 
 chokidar.watch(['./renderer-process/**/*'])
   .on('change', () => {
