@@ -32,11 +32,10 @@ function createWindow() {
   });
 }
 
-ipcMain.on('invoice-preview', (event, args) => {
-  invoicePreview(args).then((url) => {
-    let previewWindow = new BrowserWindow({parent: window, show: true});
-    previewWindow.loadURL(url);
-  })
+ipcMain.on('invoice-preview', (event, previewUrl) => {
+  let previewWindow = new BrowserWindow({parent: window, width: 1200, height: 800});
+  console.log(previewUrl)
+  previewWindow.loadURL(`file://${__dirname}/../pdfjs/web/viewer.html?file=${previewUrl}`);
 });
 
 chokidar.watch(['./renderer-process/**/*'])

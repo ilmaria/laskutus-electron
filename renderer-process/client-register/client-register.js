@@ -1,8 +1,9 @@
 (function () {
-  const { remote, ipcRenderer } = require('electron');
+  const { remote } = require('electron');
   const fs = require('fs');
   const config = remote.require('./config');
   const xlxs = require('xlsx');
+  const previewInvoice = require('./client-register/preview-invoice');
 
   Polymer({
     is: 'x-client-register',
@@ -28,7 +29,7 @@
       const client = grid.items[clientIndex];
 
       if (client) {
-        ipcRenderer.send('invoice-preview', client);
+        previewInvoice(client);
       }
     });
 
@@ -68,4 +69,5 @@
     grid.columns = columns;
     grid.items = register;
   }
+
 })();
