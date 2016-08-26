@@ -1,8 +1,7 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain } = electron;
-const config = require('./config');
+const config = require('./main-process/config');
 const chokidar = require('chokidar');
-const invoicePreview = require('./invoice-preview');
 
 let window;
 
@@ -14,7 +13,7 @@ function createWindow() {
     y: config.get('window.y')
   });
 
-  window.loadURL(`file://${__dirname}/../renderer-process/index.html`);
+  window.loadURL(`file://${__dirname}/renderer-process/index.html`);
 
   window.webContents.openDevTools();
 
@@ -32,10 +31,15 @@ function createWindow() {
   });
 }
 
-ipcMain.on('invoice-preview', (event, previewUrl) => {
-  let previewWindow = new BrowserWindow({parent: window, width: 1200, height: 800});
-  console.log(previewUrl)
-  previewWindow.loadURL(`file://${__dirname}/../pdfjs/web/viewer.html?file=${previewUrl}`);
+ipcMain.on('invoice-preview', (event, invoiceData) => {
+  let previewWindow = new BrowserWindow({parent: window, width: 800, height: 1000});
+  previewWindow.loadURL(
+    `file://${__dirname}/renderer-process/invoice-preview/invoice-preview.html`
+  );
+
+  ipcMain.on('invoice-preview-ready', (event) => {
+    event.sender.send('invoice-data', invoiceData);
+  })
 });
 
 chokidar.watch(['./renderer-process/**/*'])

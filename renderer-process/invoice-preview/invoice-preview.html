@@ -1,19 +1,31 @@
 <!DOCTYPE html>
-<html>
-  <head><meta charset="utf-8"></head>
-  <body>
+<html lang="fi">
+  <head>
     
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Laskun esikatselu</title>
+    <meta name="description" content="Laskun esikatselu.">
+    
+    <style>
+      body {
+        margin: 0;
+      }
+      webview {
+        display: inline-flex;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+      }
+    </style>
+
+  </head>
+  
+  <body>
+    <webview id="preview-frame" src=""></webview>
+
+    <script src="invoice-preview.js"></script>
   </body>
 </html>
-
-<!--<dom-module is="x-invoice-preview">
-  <template>
-    <webview id="preview-frame"
-      src="[[previewUrl]]"
-      style="display:inline-flex; width:640px; height:480px">
-    </webview>
-  </template>
-
-  <script src="invoice-preview.js"></script>
-</dom-module>
--->
