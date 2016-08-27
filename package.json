@@ -2,7 +2,7 @@
   "name": "laskutus-js",
   "version": "1.0.0",
   "author": "Ilmari Autio",
-  "main": "main.js",
+  "main": "src/main.js",
   "dependencies": {
     "blob-stream": "^0.1.3",
     "electron-config": "^0.2.1",
