@@ -1,7 +1,22 @@
 const PDFDocument = require('pdfkit');
 
-module.exports.createPdf = createPdf;
-  
+const fieldNames = [
+  'nimi',
+  'lähiosoite',
+  'postitoimipaikka',
+  'päiväys',
+  'laskunumero',
+  'eräpäivä',
+  'puhelin',
+  'maksuehto',
+  'viivästyskorko'
+];
+
+module.exports = {
+  createPdf,
+  fieldNames
+};
+
 function createPdf(fields) {
   const doc = new PDFDocument();
   

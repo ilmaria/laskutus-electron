@@ -2,16 +2,33 @@
   const { remote, ipcRenderer } = require('electron');
   const fs = require('fs');
   const config = remote.require('./config');
+  const invoice = remote.require('./invoice');
   const xlxs = require('xlsx');
 
   Polymer({
     is: 'x-client-register',
+
+    properties: {
+      pdfFields: {
+        type: Array,
+        value: () => {
+          return invoice.fieldNames.reduce((arr, fieldName) => {
+            arr.push({name: fieldName, value: ''});
+            return arr;
+          }, []);
+        }
+      }
+    },
+
     ready: addFileSelection
   });
 
   function addFileSelection() {
-    const grid = this.$['register-table'];
+    const grid = this.$['register-grid'];
     const registerFile = config.get('registerFile');
+    const view = registerFile ? 'invoice-selection' : 'register-selection';
+    
+    this.$.view.select(view);
 
     this.$['select-register-btn'].addEventListener('change', (event) => {
       const file = event.target.files[0];

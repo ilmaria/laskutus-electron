@@ -1,15 +1,30 @@
 <link rel="import" href="css/basscss.html">
 <link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module is="x-client-register">
   <template>
     <style is="custom-style" include="basscss"></style>
     
-    <div class="h2">Et ole valinnut rekisteriä</div>
+    <iron-pages id="view" attr-for-selected="id">
 
-    <input type="file" id="select-register-btn">Valitse rekisteri</input>
+      <div id="register-selection">
+        <p class="h2">Et ole valinnut rekisteriä</p>
+        <input type="file" id="select-register-btn">Valitse rekisteri</input>
+      </div>
 
-    <vaadin-grid id="register-table"></vaadin-grid>
+      <div id="invoice-selection">
+        <vaadin-grid id="register-grid"></vaadin-grid>
+
+        <div id="field-editor">
+          <template is="dom-repeat" items="{{pdfFields}}">
+            <paper-input label="[[item.name]]" value="{{item.value}}"></paper-input>
+          </template>
+        </div>
+      </div>
+
+    </iron-pages>
 
   </template>
 

@@ -42,7 +42,7 @@ ipcMain.on('invoice-preview', (event, invoiceData) => {
   })
 });
 
-chokidar.watch(['./ui/**/*'])
+chokidar.watch([`${__dirname}/ui/**/*`])
   .on('change', () => {
     if (window) {
       window.reload();
