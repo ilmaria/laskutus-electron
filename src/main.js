@@ -1,7 +1,8 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain } = electron;
-const config = require('./config');
 const chokidar = require('chokidar');
+const config = require('./config');
+const invoice = require('./invoice');
 
 let window;
 
@@ -37,10 +38,14 @@ ipcMain.on('invoice-preview', (event, invoiceData) => {
     `file://${__dirname}/ui/x-invoice-preview.html`
   );
   //previewWindow.webContents.openDevTools();
-  ipcMain.on('invoice-preview-ready', (event) => {
+  ipcMain.once('invoice-preview-ready', (event) => {
     event.sender.send('invoice-data', invoiceData);
   })
 });
+
+ipcMain.on('invoice-save', (event, invoiceData) => {
+  invoice.savePdf(invoiceData, `${__dirname}/../laskut`);
+})
 
 chokidar.watch([`${__dirname}/ui/**/*`])
   .on('change', () => {

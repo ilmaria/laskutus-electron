@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <dom-module is="x-client-register">
   <template>
@@ -16,6 +17,9 @@
 
       <div id="invoice-selection">
         <vaadin-grid id="register-grid"></vaadin-grid>
+
+        <paper-button id="preview-btn" raised>Esikatselu</paper-button>
+        <paper-button id="save-btn" raised>Tallenna</paper-button>
 
         <div id="field-editor">
           <template is="dom-repeat" items="{{pdfFields}}">

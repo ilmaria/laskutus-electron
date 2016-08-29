@@ -1,4 +1,6 @@
 const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
 
 const fieldNames = [
   'nimi',
@@ -14,6 +16,7 @@ const fieldNames = [
 
 module.exports = {
   createPdf,
+  savePdf,
   fieldNames
 };
 
@@ -72,4 +75,17 @@ function createPdf(fields) {
   doc.end();
 
   return doc;
+}
+
+function savePdf(invoiceData, dir) {
+  try {
+    fs.accessSync(dir, fs.F_OK);
+  } catch (e) {
+    fs.mkdir(dir);
+  }
+
+  const file = path.join(dir, `${invoiceData.nimi.replace(/ /g, '_')}.pdf`);
+
+  createPdf(invoiceData)
+    .pipe(fs.createWriteStream(file));
 }

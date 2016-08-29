@@ -20,42 +20,46 @@
       }
     },
 
-    ready: addFileSelection
-  });
-
-  function addFileSelection() {
-    const grid = this.$['register-grid'];
-    const registerFile = config.get('registerFile');
-    const view = registerFile ? 'invoice-selection' : 'register-selection';
-    
-    this.$.view.select(view);
-
-    this.$['select-register-btn'].addEventListener('change', (event) => {
-      const file = event.target.files[0];
+    ready() {
+      const grid = this.$['register-grid'];
+      const registerFile = config.get('registerFile');
+      const view = registerFile ? 'invoice-selection' : 'register-selection';
       
-      if (file) {
-        const register = importRegister(file.path);
-        renderToGrid(grid, register);
-        config.set('registerFile', file.path);
-      }
-    });
+      this.$['view'].select(view);
 
-    grid.addEventListener('selected-items-changed', () => {
-      const clientIndex = grid.selection.selected()[0];
-      const client = grid.items[clientIndex];
+      this.$['select-register-btn'].addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        
+        if (file) {
+          const register = importRegister(file.path);
+          renderToGrid(grid, register);
+          config.set('registerFile', file.path);
+        }
+      });
 
-      if (client) {
-        ipcRenderer.send('invoice-preview', client);
-      }
-    });
+      const sendSelectedGridItemTo = (channel) => () => {
+        const clientIndex = grid.selection.selected()[0];
+        const client = grid.items[clientIndex];
 
-    fs.access(registerFile, fs.F_OK, (err) => {
-      if (!err) {
-        const register = importRegister(registerFile);
-        renderToGrid(grid, register);
-      }
-    });
-  }
+        if (client) {
+          ipcRenderer.send(channel, client);
+        }
+      };
+
+      this.$['preview-btn'].addEventListener('click',
+        sendSelectedGridItemTo('invoice-preview'));
+
+      this.$['save-btn'].addEventListener('click',
+        sendSelectedGridItemTo('invoice-save'));
+
+      fs.access(registerFile, fs.F_OK, (err) => {
+        if (!err) {
+          const register = importRegister(registerFile);
+          renderToGrid(grid, register);
+        }
+      });
+    }
+  });
 
   function importRegister(register) {
     const workbook = xlxs.readFile(register);

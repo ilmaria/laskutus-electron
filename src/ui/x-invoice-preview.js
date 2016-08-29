@@ -1,14 +1,7 @@
 (function () {
-  const fs = require('fs');
   const { ipcRenderer } = require('electron');
   const invoice = require('../invoice');
   const BlobStream = require('blob-stream');
-
-  try {
-    fs.accessSync(`${__dirname}/../laskut`, fs.F_OK);
-  } catch (e) {
-    fs.mkdir(`${__dirname}/../laskut`);
-  }
 
   ipcRenderer.send('invoice-preview-ready');
 
