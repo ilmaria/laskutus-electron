@@ -11,7 +11,8 @@ const fieldNames = [
   'eräpäivä',
   'puhelin',
   'maksuehto',
-  'viivästyskorko'
+  'viivästyskorko',
+  'numero'
 ];
 
 module.exports = {
@@ -26,7 +27,8 @@ function createPdf(fields) {
   const {
     nimi, lähiosoite, postitoimipaikka,
     päiväys, laskunumero, eräpäivä,
-    puhelin, maksuehto, viivästyskorko
+    puhelin, maksuehto, viivästyskorko,
+    numero
   } = fields;
 
   doc.text('LAPPAJÄRVEN LOMA-GOLF OY');
@@ -83,8 +85,10 @@ function savePdf(invoiceData, dir) {
   } catch (e) {
     fs.mkdir(dir);
   }
-
-  const file = path.join(dir, `${invoiceData.nimi.replace(/ /g, '_')}.pdf`);
+  
+  const name = invoiceData.nimi.replace(/ /g, '_') || 'nimetön';
+  const number = invoiceData.numero;
+  const file = path.join(dir, `${name}_${number}.pdf`);
 
   createPdf(invoiceData)
     .pipe(fs.createWriteStream(file));

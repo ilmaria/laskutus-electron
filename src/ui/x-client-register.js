@@ -9,14 +9,13 @@
     is: 'x-client-register',
 
     properties: {
+      selectedClient: {
+        type: Object,
+        value: () => Object.create(null)
+      },
       pdfFields: {
         type: Array,
-        value: () => {
-          return invoice.fieldNames.reduce((arr, fieldName) => {
-            arr.push({name: fieldName, value: ''});
-            return arr;
-          }, []);
-        }
+        computed: 'updatePdfFields(selectedClient)'
       }
     },
 
@@ -29,7 +28,6 @@
 
       this.$['select-register-btn'].addEventListener('change', (event) => {
         const file = event.target.files[0];
-        
         if (file) {
           const register = importRegister(file.path);
           renderToGrid(grid, register);
@@ -37,20 +35,25 @@
         }
       });
 
-      const sendSelectedGridItemTo = (channel) => () => {
+      this.$['preview-btn'].addEventListener('click', () => {
+        const client = this.getClientData();
+        if (client) { 
+          ipcRenderer.send('invoice-preview', client);
+        }
+      });
+
+      this.$['save-btn'].addEventListener('click', () => {
+        const client = this.getClientData();
+        if (client) {          
+          ipcRenderer.send('invoice-save', client);
+        }
+      });
+      
+      grid.addEventListener('selected-items-changed', () => {
         const clientIndex = grid.selection.selected()[0];
         const client = grid.items[clientIndex];
-
-        if (client) {
-          ipcRenderer.send(channel, client);
-        }
-      };
-
-      this.$['preview-btn'].addEventListener('click',
-        sendSelectedGridItemTo('invoice-preview'));
-
-      this.$['save-btn'].addEventListener('click',
-        sendSelectedGridItemTo('invoice-save'));
+        this.selectedClient = client;
+      });
 
       fs.access(registerFile, fs.F_OK, (err) => {
         if (!err) {
@@ -58,8 +61,37 @@
           renderToGrid(grid, register);
         }
       });
-    }
+    },
+    
+    getClientData() {
+      const inputs = Polymer.dom(this.$['field-editor'])
+        .querySelectorAll('paper-input');
+        
+      let isEmpty = true;
+      const client = inputs.reduce((data, item) => {
+        if (item.value !== '') {
+          isEmpty = false;
+        }
+        data[item.label] = item.value;
+        return data;
+      }, {});
+      
+      return isEmpty ? null : client;
+    },
+    
+    updatePdfFields: updatePdfFields
   });
+  
+  function updatePdfFields(selectedClient = {}) {
+    return invoice.fieldNames.reduce((arr, field) => {
+      const value = selectedClient[field] !== undefined ?
+        selectedClient[field] : '';
+        
+      arr.push({name: field, value: value});
+      
+      return arr;
+    }, []);
+  }
 
   function importRegister(register) {
     const workbook = xlxs.readFile(register);

@@ -7,6 +7,14 @@
 <dom-module is="x-client-register">
   <template>
     <style is="custom-style" include="basscss"></style>
+    <style>
+      #field-editor {
+        columns: auto 2;
+      }
+      paper-input {
+        -webkit-column-break-inside: avoid;
+      }
+    </style>
     
     <iron-pages id="view" attr-for-selected="id">
 

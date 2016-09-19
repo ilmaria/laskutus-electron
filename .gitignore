@@ -1,4 +1,4 @@
-node_modules
-.vscode
-laskut
-bower_components
+node_modules/
+.vscode/
+laskut/
+bower_components/
