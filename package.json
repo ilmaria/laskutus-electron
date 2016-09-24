@@ -4,6 +4,7 @@
   "author": "Ilmari Autio",
   "main": "src/main.js",
   "dependencies": {
+    "accounting": "^0.4.1",
     "blob-stream": "^0.1.3",
     "electron-config": "^0.2.1",
     "jszip": "^3.0.0",
