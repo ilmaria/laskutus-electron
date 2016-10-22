@@ -2,6 +2,7 @@ const PDFDocument = require('pdfkit')
 const fs = require('fs')
 const path = require('path')
 const accounting = require('accounting')
+const config = require('./config')
 
 const fieldNames = [
   'nimi',
@@ -13,7 +14,8 @@ const fieldNames = [
   'puhelin',
   'maksuehto',
   'viivästyskorko',
-  'numero'
+  'numero',
+  'viesti'
 ]
 
 module.exports = {
@@ -35,16 +37,19 @@ function createPdf(clientInfo, productList = [{
   count: 1,
   tax: 0.12
 }]) {
-  const doc = new PDFDocument()
+  const doc = new PDFDocument({autoFirstPage: false})
+  doc.addPage({margin: 40})
   const MARGIN_TOP = 40
   const MARGIN_LEFT = 40
-  const MARGIN_RIGHT = 612 - 72
+  const MARGIN_RIGHT = 612 - 40
+  const DEFAULT_FONT = 12
+  const BIG_FONT = 16
   
   const {
     nimi, lähiosoite, postitoimipaikka,
     päiväys, laskunumero, eräpäivä,
     puhelin, maksuehto, viivästyskorko,
-    numero
+    numero, viesti
   } = clientInfo
 
   // Company title
@@ -141,9 +146,60 @@ function createPdf(clientInfo, productList = [{
   const TOTAL_Y = productYCoord + 50
   doc.text('Yhteensä:', PRICE, TOTAL_Y)
   doc.text(formatMoney(totalPrice), TAXLESS, TOTAL_Y)
-  doc.text(formatMoney(totalPrice + totalTax),
+  const finalPrice = formatMoney(totalPrice + totalTax)
+  doc.text(finalPrice,
     TOTAL, TOTAL_Y, {align: 'right'})
   
+  const MESSAGE = TOTAL_Y + 70
+  doc.text(viesti, MARGIN_LEFT, MESSAGE)
+  
+  const JSG = config.get('JSG')
+  
+  const RECEIVER_INFO = 550
+  const viitenumero = '002' + numero
+  
+  doc.text([
+    'Saaja / Mottagare:',
+    'Tilinumero / Kontonummer:',
+    '(IBAN)',
+    'Viitenumero / Ref. nr:',
+    'Eräpäivä / Förfallodag:',
+    'Maksu / Betalningen:'
+  ].join('\n'), MARGIN_LEFT, RECEIVER_INFO,
+    {paragraphGap: 6})
+  
+  
+  doc.font('Helvetica-Bold')
+    .fontSize(BIG_FONT)
+    
+  doc.text([
+    JSG.name,
+    JSG.IBAN,
+    '',
+    viitenumero,
+    eräpäivä,
+    finalPrice
+  ].join('\n'), MARGIN_LEFT + 160, RECEIVER_INFO - 2,
+    {paragraphGap: 1})
+  
+  doc.font('Helvetica')
+    .fontSize(DEFAULT_FONT)
+  
+  const FOOTER = 700
+  doc.lineWidth(1)
+  doc.lineCap('butt')
+    .moveTo(MARGIN_LEFT - 10, FOOTER)
+    .lineTo(MARGIN_RIGHT + 10, FOOTER)
+    .stroke()
+  
+  doc
+    .text(JSG.name, MARGIN_LEFT, FOOTER + 5,
+      {continued: true})
+    .text(`Puh. ${JSG.tel}`,
+      {continued: true, align: 'center'})
+    .text(`Y-tunnus: ${JSG.yTunnus}`,
+      {align: 'right'})
+    
   doc.end()
 
   return doc
