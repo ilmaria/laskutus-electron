@@ -92,7 +92,7 @@ function createPdf(clientInfo, productList = [{
   const PRODUCT_LIST_HEADER = 250
   const PRICE_H = 250
   const PRICE = PRICE_H - 10
-  const COUNT_H = 300
+  const COUNT_H = 310
   const COUNT = COUNT_H + 10
   const TAXLESS_H = 370
   const TAXLESS = TAXLESS_H - 5
@@ -160,26 +160,25 @@ function createPdf(clientInfo, productList = [{
   
   doc.text([
     'Saaja / Mottagare:',
-    'Tilinumero / Kontonummer:',
-    '(IBAN)',
+    'Tilinumero / Kontonummer (IBAN):',
     'Viitenumero / Ref. nr:',
     'Eräpäivä / Förfallodag:',
     'Maksu / Betalningen:'
   ].join('\n'), MARGIN_LEFT, RECEIVER_INFO,
     {paragraphGap: 6})
   
+  const RECEIVER_INFO_LEFT = MARGIN_LEFT + 200
   
   doc.font('Helvetica-Bold')
     .fontSize(BIG_FONT)
-    
+
   doc.text([
     JSG.name,
     JSG.IBAN,
-    '',
     viitenumero,
     eräpäivä,
     finalPrice
-  ].join('\n'), MARGIN_LEFT + 160, RECEIVER_INFO - 2,
+  ].join('\n'), RECEIVER_INFO_LEFT, RECEIVER_INFO - 2,
     {paragraphGap: 1})
   
   doc.font('Helvetica')
@@ -195,10 +194,15 @@ function createPdf(clientInfo, productList = [{
   doc
     .text(JSG.name, MARGIN_LEFT, FOOTER + 5,
       {continued: true})
-    .text(`Puh. ${JSG.tel}`,
-      {continued: true, align: 'center'})
     .text(`Y-tunnus: ${JSG.yTunnus}`,
       {align: 'right'})
+  
+  doc.text(`Puh. ${JSG.tel}`, MARGIN_LEFT, FOOTER + 5,
+      {align: 'center'})
+    .text(JSG.email, {align: 'center'})
+    .moveUp()
+    .text(JSG.address)
+    .text(JSG.postalAddress)
     
   doc.end()
 
