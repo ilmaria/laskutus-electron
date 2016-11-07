@@ -22,7 +22,7 @@
     ready() {
       const grid = this.$['register-grid']
       const registerFile = config.get('registerFile')
-      const view = registerFile ? 'invoice-selection' : 'register-selection'
+      const view = registerFile ? 'register-view' : 'register-selection'
       
       this.$['view'].select(view)
 

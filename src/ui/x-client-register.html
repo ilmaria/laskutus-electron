@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 
 <dom-module is="x-client-register">
   <template>
@@ -10,6 +12,9 @@
     <style>
       #field-editor {
         columns: auto 2;
+      }
+      #invoice-settings paper-tab {
+        width: 100px;
       }
       paper-input {
         -webkit-column-break-inside: avoid;
@@ -23,18 +28,30 @@
         <input type="file" id="select-register-btn">Valitse rekisteri</input>
       </div>
 
-      <div id="invoice-selection">
+      <div id="register-view">
         <vaadin-grid id="register-grid"></vaadin-grid>
 
         <paper-button id="preview-btn" raised>Esikatselu</paper-button>
         <paper-button id="save-btn" raised>Tallenna</paper-button>
 
-        <div id="field-editor">
-          <template is="dom-repeat" items="{{pdfFields}}">
-            <paper-input label="[[item.name]]" value="{{item.value}}"></paper-input>
-          </template>
+        <section id="invoice-settings">
+          <paper-toolbar>
+            <paper-tabs selected="{{selected}}" fallback-selection="0" no-slide>
+              <paper-tab>TAB 1</paper-tab>
+              <paper-tab>TAB 2</paper-tab>
+              <paper-tab>TAB 3</paper-tab>
+            </paper-tabs>
+          </paper-toolbar>
+          
+          <iron-pages selected="{{selected}}">
+            <div id="field-editor">
+              <template is="dom-repeat" items="{{pdfFields}}">
+                <paper-input label="[[item.name]]" value="{{item.value}}"></paper-input>
+              </template>
+            </div>
+          </iron-pages>
         </div>
-      </div>
+        </section>
 
     </iron-pages>
 
