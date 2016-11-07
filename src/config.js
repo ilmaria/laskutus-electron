@@ -1,5 +1,5 @@
-const Config = require('electron-config');
-const { ipcMain } = require('electron');
+const Config = require('electron-config')
+const { ipcMain } = require('electron')
 
 const config = new Config({ defaults: {
   // Default window dimensions
@@ -21,6 +21,6 @@ const config = new Config({ defaults: {
     postalAddress: '62600 Lappajärvi',
     IBAN: 'FI73 1193 3006 1027 42'
   }
-}});
+}})
 
-module.exports = config;
+module.exports = config
