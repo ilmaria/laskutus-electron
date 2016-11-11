@@ -1,20 +1,32 @@
 <link rel="import" href="css/basscss.html">
+<link rel="import" href="css/citric-flames.html">
 <link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 
 <dom-module is="x-client-register">
   <template>
-    <style is="custom-style" include="basscss"></style>
+    <style is="custom-style" include="basscss citric-flames"></style>
     <style>
-      #field-editor {
-        columns: auto 2;
+      :root {
+        --primary-color: var(--default-primary-color);
+      }
+      #field-editor,
+      #filters {
+        columns: 250px auto;
+      }
+      #filters > div {
+        -webkit-column-break-inside: avoid;
       }
       #invoice-settings paper-tab {
-        width: 100px;
+        width: 150px;
       }
       paper-input {
         -webkit-column-break-inside: avoid;
@@ -29,28 +41,65 @@
       </div>
 
       <div id="register-view">
+        
+        <!--Register grid-->
         <vaadin-grid id="register-grid"></vaadin-grid>
 
-        <paper-button id="preview-btn" raised>Esikatselu</paper-button>
-        <paper-button id="save-btn" raised>Tallenna</paper-button>
+        <paper-button id="preview-btn" raised class="primary">Esikatselu</paper-button>
+        <paper-button id="save-btn" raised disabled class="primary">Tallenna</paper-button>
+        <paper-button id="save-all-btn" raised class="primary">Tallenna kaikki</paper-button>
 
+        <!--Settings-->
         <section id="invoice-settings">
           <paper-toolbar>
             <paper-tabs selected="{{selected}}" fallback-selection="0" no-slide>
-              <paper-tab>TAB 1</paper-tab>
-              <paper-tab>TAB 2</paper-tab>
-              <paper-tab>TAB 3</paper-tab>
+              <paper-tab>
+                <h4>Asetukset</h4>
+              </paper-tab>
+              <paper-tab>
+                <h4>Laskun kentät</h4>
+              </paper-tab>
+              <paper-tab>
+                <h4>Tab3</h4>
+              </paper-tab>
             </paper-tabs>
           </paper-toolbar>
           
-          <iron-pages selected="{{selected}}">
+          <iron-pages class="pr2" selected="{{selected}}">
+            
+            <!--Filters-->
+            <div id="filters">
+              
+              <div id="vastike-selector">
+                <h4 class="mb1">Laskutettava vastike</h4>
+                <div class="mb2">
+                  <paper-checkbox checked>Perusvastike</paper-checkbox>
+                </div>
+                <div class="mb2">
+                  <paper-checkbox>Käyttövastike</paper-checkbox>
+                </div>
+                <div class="mb2">
+                  <paper-checkbox>Rahoitusvastike</paper-checkbox>
+                </div>
+              </div>
+              
+              <div id="vastike-filter">
+                <paper-checkbox checked>Älä laskuta, jos asiakasrekisterissä vastikesarakkeen arvo on "OK"</paper-checkbox>
+              </div>
+              
+            </div>
+            
+            <!--Invoice fields-->
             <div id="field-editor">
               <template is="dom-repeat" items="{{pdfFields}}">
                 <paper-input label="[[item.name]]" value="{{item.value}}"></paper-input>
               </template>
             </div>
+            
           </iron-pages>
+          
         </div>
+        
         </section>
 
     </iron-pages>

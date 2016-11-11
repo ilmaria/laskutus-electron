@@ -55,6 +55,23 @@
           const clientIndex = grid.selection.selected()[0]
           const client = grid.items[clientIndex]
           this.selectedClient = client
+          /*
+          grid.getItem(clientIndex, (err, elem) => {
+            console.log(elem)
+            
+            if (err) return
+            
+            const focusOutFn = () => {
+              grid.selection.deselect(clientIndex)
+              elem.removeEventListener(focusOutFn)
+            }
+            
+            elem.addEventListener('focusout', focusOutFn)
+          })
+          */
+          this.$['save-btn'].disabled = false
+        } else {
+          this.$['save-btn'].disabled = true
         }
       })
 
@@ -116,9 +133,9 @@
       const cellAddress = xlxs.utils.encode_cell({c: i, r: headerRow})
       const cell = worksheet[cellAddress]
       
-      if (!cell) continue
-
-      columns.push({ name: cell.v })
+      if (cell) {
+        columns.push({name: cell.v})
+      }
     }
     
     grid.columns = columns
