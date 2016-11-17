@@ -19,12 +19,12 @@ const fieldNames = [
 ]
 
 module.exports = {
-  createPdf,
-  savePdf,
+  createInvoicePdf,
+  saveInvoicePdf,
   fieldNames
 }
-
-function createPdf(clientInfo, productList = [{
+/*
+[{
   name: 'Käyttövastike',
   id: 'P 848',
   price: 210,
@@ -36,9 +36,17 @@ function createPdf(clientInfo, productList = [{
   price: 110,
   count: 1,
   tax: 0.12
-}]) {
+}]
+*/
+
+/**
+ * Create an invoice PDF in memory. Pipe it to a file stream to save it.
+ * @param {Object} invoiceData
+ */
+function createInvoicePdf(clientInfo, invoiceData) {
   const doc = new PDFDocument({autoFirstPage: false})
   doc.addPage({margin: 40})
+
   const MARGIN_TOP = 40
   const MARGIN_LEFT = 40
   const MARGIN_RIGHT = 612 - 40
@@ -46,11 +54,14 @@ function createPdf(clientInfo, productList = [{
   const BIG_FONT = 16
   
   const {
-    nimi, lähiosoite, postitoimipaikka,
+    nimi, lähiosoite, postitoimipaikka, numero
+  } = clientInfo
+
+  const {
     päiväys, laskunumero, eräpäivä,
     puhelin, maksuehto, viivästyskorko,
-    numero, viesti
-  } = clientInfo
+    viesti, productList
+  } = invoiceData
 
   // Company title
   doc.text('LAPPAJÄRVEN LOMA-GOLF OY', MARGIN_LEFT, MARGIN_TOP)
@@ -191,8 +202,7 @@ function createPdf(clientInfo, productList = [{
     .lineTo(MARGIN_RIGHT + 10, FOOTER)
     .stroke()
   
-  doc
-    .text(JSG.name, MARGIN_LEFT, FOOTER + 5,
+  doc.text(JSG.name, MARGIN_LEFT, FOOTER + 5,
       {continued: true})
     .text(`Y-tunnus: ${JSG.yTunnus}`,
       {align: 'right'})
@@ -209,6 +219,10 @@ function createPdf(clientInfo, productList = [{
   return doc
 }
 
+/**
+ * Format number into euros with two decimal places.
+ * @param {number} number
+ */
 function formatMoney(number) {
   return accounting.formatMoney(number, {
     symbol: '€',
@@ -219,17 +233,36 @@ function formatMoney(number) {
   })
 }
 
-function savePdf(invoiceData, dir) {
+/**
+ * Save invoices in PDF format.
+ * @param {Object[]} clients - List of client infos. This is the only data
+ * that will vary between invoices.
+ * @param {Object} opts - Other options for invoices. Same options will be
+ * used for all saved invoices.
+ * @param {string} dir - Directory to save invoice files.   
+ */
+function saveInvoicePdf(clients, opts, dir) {
   try {
     fs.accessSync(dir, fs.F_OK)
   } catch (e) {
     fs.mkdir(dir)
   }
-  
-  const name = invoiceData.nimi.replace(/ /g, '_') || 'nimetön'
-  const number = invoiceData.numero
-  const file = path.join(dir, `${name}_${number}.pdf`)
 
-  createPdf(invoiceData)
-    .pipe(fs.createWriteStream(file))
+  const {invoiceData, excludeCol} = opts
+  
+  for (const client of clients) {
+    // if column is excluded then skip client
+    const skip = Object.keys(excludeCol).find(col => {
+      return client[col] === excludeCol[col]
+    })
+
+    if (!skip) {
+      const name = client.nimi.replace(/ /g, '_') || 'nimetön'
+      const number = client.numero
+      const file = path.join(dir, `${name}_${number}.pdf`)
+
+      createInvoicePdf(client, invoiceData)
+        .pipe(fs.createWriteStream(file))
+    }
+  }
 }

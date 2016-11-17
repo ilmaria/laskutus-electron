@@ -37,15 +37,67 @@
 
       this.$['preview-btn'].addEventListener('click', () => {
         const client = this.getClientData()
-        if (client) { 
-          ipcRenderer.send('invoice-preview', client)
+        if (client) {
+          let opts = { client }
+          ipcRenderer.send('invoice-preview', opts)
         }
       })
 
       this.$['save-btn'].addEventListener('click', () => {
         const client = this.getClientData()
-        if (client) {          
-          ipcRenderer.send('invoice-save', client)
+        if (client) {
+          let opts = { client }
+          ipcRenderer.send('invoice-save', opts)
+        }
+      })
+
+      this.$['save-all-btn'].addEventListener('click', () => {
+        const client = this.getClientData()
+        if (client) {
+          let opts = {
+            client,
+            excludeCol: {},
+            productList: []
+          }
+
+          if (this.$['exclude-rahoitus-vastike'].checked) {
+            opts.excludeCol['rahoitusvastike'] = 'OK'
+          }
+
+          if (this.$['perusvastike'].checked) {
+            const product = {
+              name: 'Perusvastike',
+              id: 'P 528',
+              price: 110,
+              count: 1,
+              tax: 0.12
+            }
+            opts.productList.push(product)
+          }
+
+          if (this.$['käyttövastike'].checked) {
+            const product = {
+              name: 'Käyttövastike',
+              id: 'P 448',
+              price: 210,
+              count: 1,
+              tax: 0.11
+            }
+            opts.productList.push(product)
+          }
+
+          if (this.$['rahoitusvastike'].checked) {
+            const product = {
+              name: 'Rahoitusvastike',
+              id: 'P 548',
+              price: 110,
+              count: 1,
+              tax: 0.10
+            }
+            opts.productList.push(product)
+          }
+
+          ipcRenderer.send('invoice-save-all', opts)
         }
       })
       
@@ -99,7 +151,7 @@
       return isEmpty ? null : client
     },
     
-    updatePdfFields: updatePdfFields
+    updatePdfFields
   })
   
   function updatePdfFields(selectedClient = {}) {
