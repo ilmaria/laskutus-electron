@@ -237,6 +237,7 @@ function createInvoicePdf(client, invoiceData) {
 /**
  * Format number into euros.
  * @param {number} number
+ * @return {string}
  */
 function formatMoney(number) {
   return accounting.formatMoney(number, {

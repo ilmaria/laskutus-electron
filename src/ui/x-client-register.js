@@ -168,6 +168,10 @@
     grid.items = register
   }
 
+  /**
+   * Get data that will be same for all created invoices.
+   * @return {Object}
+   */
   function getInvoiceData() {
     const {
       laskunumero,  maksuehto, viivästyskorko
@@ -183,6 +187,10 @@
     }
   }
 
+  /**
+   * Add all selected products to the product list.
+   * @return {Object[]} - Return a list of product objects.
+   */
   function getProductList() {
     let productList = []
     console.log('id="perusvastike" - ', this.$['perusvastike'])
