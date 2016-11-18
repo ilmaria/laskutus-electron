@@ -20,6 +20,12 @@ const config = new Config({ defaults: {
     address: 'Hyyrynkuja 9 B',
     postalAddress: '62600 Lappajärvi',
     IBAN: 'FI73 1193 3006 1027 42'
+  },
+
+  invoiceSettings: {
+    laskunumero: '1000',
+    maksuehto: '21pv netto',
+    viivästyskorko: 0.075
   }
 }})
 

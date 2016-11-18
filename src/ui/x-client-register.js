@@ -38,67 +38,29 @@
       this.$['preview-btn'].addEventListener('click', () => {
         const client = this.getClientData()
         if (client) {
-          let opts = { client }
-          ipcRenderer.send('invoice-preview', opts)
+          ipcRenderer.send('invoice-preview', client, getInvoiceData())
         }
       })
 
       this.$['save-btn'].addEventListener('click', () => {
         const client = this.getClientData()
         if (client) {
-          let opts = { client }
-          ipcRenderer.send('invoice-save', opts)
+          ipcRenderer.send('invoice-save', [client], getInvoiceData(), opts)
         }
       })
 
       this.$['save-all-btn'].addEventListener('click', () => {
-        const client = this.getClientData()
-        if (client) {
-          let opts = {
-            client,
-            excludeCol: {},
-            productList: []
-          }
+        const allClients = grid.items || []
 
-          if (this.$['exclude-rahoitus-vastike'].checked) {
-            opts.excludeCol['rahoitusvastike'] = 'OK'
-          }
-
-          if (this.$['perusvastike'].checked) {
-            const product = {
-              name: 'Perusvastike',
-              id: 'P 528',
-              price: 110,
-              count: 1,
-              tax: 0.12
-            }
-            opts.productList.push(product)
-          }
-
-          if (this.$['käyttövastike'].checked) {
-            const product = {
-              name: 'Käyttövastike',
-              id: 'P 448',
-              price: 210,
-              count: 1,
-              tax: 0.11
-            }
-            opts.productList.push(product)
-          }
-
-          if (this.$['rahoitusvastike'].checked) {
-            const product = {
-              name: 'Rahoitusvastike',
-              id: 'P 548',
-              price: 110,
-              count: 1,
-              tax: 0.10
-            }
-            opts.productList.push(product)
-          }
-
-          ipcRenderer.send('invoice-save-all', opts)
+        let opts = {
+          excludeCol: {}
         }
+
+        if (this.$['exclude-rahoitus-vastike'].checked) {
+          opts.excludeCol['rahoitusvastike'] = 'OK'
+        }
+
+        ipcRenderer.send('invoice-save', allClients, opts)
       })
       
       grid.addEventListener('selected-items-changed', () => {
@@ -165,6 +127,11 @@
     }, [])
   }
 
+  /**
+   * Read excel file and save it into memory.
+   * @param {string} register - Path to the register file.
+   * @return {Object} Return js-xlsx worksheet.
+   */
   function importRegister(register) {
     const workbook = xlxs.readFile(register)
     const firstSheet = workbook.SheetNames[0]
@@ -172,6 +139,13 @@
     return worksheet
   }
 
+  /**
+   * Transform js-xlsx data to be compatible with vaadin-grid and
+   * bind the data to an existing grid.
+   * @param {Object} grid - Vaadin-grid to bind the worksheet data.
+   * @param {Object} worksheet - Js-xlsx worksheet that contains the
+   * client register.
+   */
   function renderToGrid(grid, worksheet) {
     const range = xlxs.utils.decode_range(worksheet['!ref'])
     const register = xlxs.utils.sheet_to_json(worksheet)
@@ -192,6 +166,61 @@
     
     grid.columns = columns
     grid.items = register
+  }
+
+  function getInvoiceData() {
+    const {
+      laskunumero,  maksuehto, viivästyskorko
+    } = config.get('invoiceSettings')
+
+    return {
+      päiväys: new Date.now().toLocaleDateString(),
+      laskunumero,
+      maksuehto,
+      viivästyskorko,
+      viesti: '',
+      products: getProductList()
+    }
+  }
+
+  function getProductList() {
+    let productList = []
+    console.log('id="perusvastike" - ', this.$['perusvastike'])
+
+    if (this.$['perusvastike'].checked) {
+      const product = {
+        name: 'Perusvastike',
+        id: 'P 528',
+        price: 110,
+        count: 1,
+        tax: 0.12
+      }
+      productList.push(product)
+    }
+
+    if (this.$['käyttövastike'].checked) {
+      const product = {
+        name: 'Käyttövastike',
+        id: 'P 448',
+        price: 210,
+        count: 1,
+        tax: 0.11
+      }
+      productList.push(product)
+    }
+
+    if (this.$['rahoitusvastike'].checked) {
+      const product = {
+        name: 'Rahoitusvastike',
+        id: 'P 548',
+        price: 110,
+        count: 1,
+        tax: 0.10
+      }
+      productList.push(product)
+    }
+
+    return productList
   }
 
 })()

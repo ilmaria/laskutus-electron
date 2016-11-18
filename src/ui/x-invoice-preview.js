@@ -5,8 +5,8 @@
 
   ipcRenderer.send('invoice-preview-ready')
 
-  ipcRenderer.on('invoice-data', (event, invoiceFields) => {
-    invoice.createPdf(invoiceFields)
+  ipcRenderer.on('invoice-data', (event, client, invoiceData) => {
+    invoice.createInvoicePdf(client, invoiceData)
       .pipe(new BlobStream)
       .on('finish', function () {
         previewFrame = document.body.querySelector('#preview-frame')

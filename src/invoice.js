@@ -11,7 +11,6 @@ const fieldNames = [
   'päiväys',
   'laskunumero',
   'eräpäivä',
-  'puhelin',
   'maksuehto',
   'viivästyskorko',
   'numero',
@@ -43,9 +42,11 @@ module.exports = {
  * Create an invoice PDF in memory. Pipe it to a file stream to save it.
  * @param {Object} invoiceData
  */
-function createInvoicePdf(clientInfo, invoiceData) {
+function createInvoicePdf(client, invoiceData) {
   const doc = new PDFDocument({autoFirstPage: false})
   doc.addPage({margin: 40})
+
+  const JSG = config.get('JSG')
 
   const MARGIN_TOP = 40
   const MARGIN_LEFT = 40
@@ -55,15 +56,17 @@ function createInvoicePdf(clientInfo, invoiceData) {
   
   const {
     nimi, lähiosoite, postitoimipaikka, numero
-  } = clientInfo
+  } = client
 
   const {
     päiväys, laskunumero, eräpäivä,
-    puhelin, maksuehto, viivästyskorko,
-    viesti, productList
+    maksuehto, viivästyskorko,
+    viesti, products
   } = invoiceData
 
-  // Company title
+  //-----------------------------------------------
+  //TOP INFO
+  //-----------------------------------------------
   doc.text('LAPPAJÄRVEN LOMA-GOLF OY', MARGIN_LEFT, MARGIN_TOP)
   doc.moveDown(3)
   
@@ -92,14 +95,17 @@ function createInvoicePdf(clientInfo, invoiceData) {
     '',
     laskunumero,
     eräpäivä,
-    puhelin,
+    JSG.tel,
     maksuehto,
     viivästyskorko
   ].join('\n'), 315, MARGIN_TOP, {
     align: 'right'
   })
 
-  // Product list
+
+  //-----------------------------------------------
+  //PRODUCT HEADERS
+  //-----------------------------------------------
   const PRODUCT_LIST_HEADER = 250
   const PRICE_H = 250
   const PRICE = PRICE_H - 10
@@ -125,11 +131,14 @@ function createInvoicePdf(clientInfo, invoiceData) {
     .lineTo(MARGIN_RIGHT + 10, HEADER_DASH)
     .stroke()
     
-  // Products
+
+  //-----------------------------------------------
+  //PRODUCT LIST
+  //-----------------------------------------------
   const START_Y_COORD = HEADER_DASH + 7
   let productYCoord
-  for (let i = 0; i < productList.length; i++) {
-    const product = productList[i]
+  for (let i = 0; i < products.length; i++) {
+    const product = products[i]
     const totalPrice = product.price * product.count
     productYCoord = START_Y_COORD + i*25
     
@@ -148,7 +157,7 @@ function createInvoicePdf(clientInfo, invoiceData) {
       productYCoord, {align: 'right'})
   }
   
-  const [totalPrice, totalTax] = productList.reduce((total, product) => {
+  const [totalPrice, totalTax] = products.reduce((total, product) => {
     const price = product.price * product.count
     const tax = price * product.tax
     return [total[0] + price, total[1] + tax]
@@ -164,8 +173,10 @@ function createInvoicePdf(clientInfo, invoiceData) {
   const MESSAGE = TOTAL_Y + 70
   doc.text(viesti, MARGIN_LEFT, MESSAGE)
   
-  const JSG = config.get('JSG')
-  
+
+  //-----------------------------------------------
+  //PAYMENT INFO
+  //-----------------------------------------------
   const RECEIVER_INFO = 550
   const viitenumero = '002' + numero
   
@@ -195,6 +206,10 @@ function createInvoicePdf(clientInfo, invoiceData) {
   doc.font('Helvetica')
     .fontSize(DEFAULT_FONT)
   
+
+  //-----------------------------------------------
+  //FOOTER
+  //-----------------------------------------------
   const FOOTER = 700
   doc.lineWidth(1)
   doc.lineCap('butt')
@@ -220,7 +235,7 @@ function createInvoicePdf(clientInfo, invoiceData) {
 }
 
 /**
- * Format number into euros with two decimal places.
+ * Format number into euros.
  * @param {number} number
  */
 function formatMoney(number) {
@@ -237,23 +252,22 @@ function formatMoney(number) {
  * Save invoices in PDF format.
  * @param {Object[]} clients - List of client infos. This is the only data
  * that will vary between invoices.
+ * @param {Object} invoiceData - Invoice fields that will be same for all invoices.
  * @param {Object} opts - Other options for invoices. Same options will be
  * used for all saved invoices.
  * @param {string} dir - Directory to save invoice files.   
  */
-function saveInvoicePdf(clients, opts, dir) {
+function saveInvoicePdf(clients, invoiceData, opts, dir) {
   try {
     fs.accessSync(dir, fs.F_OK)
   } catch (e) {
     fs.mkdir(dir)
   }
 
-  const {invoiceData, excludeCol} = opts
-  
   for (const client of clients) {
     // if column is excluded then skip client
-    const skip = Object.keys(excludeCol).find(col => {
-      return client[col] === excludeCol[col]
+    const skip = Object.keys(opts.excludeCol).find(col => {
+      return client[col] === opts.excludeCol[col]
     })
 
     if (!skip) {

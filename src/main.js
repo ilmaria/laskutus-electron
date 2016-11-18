@@ -38,19 +38,19 @@ function createWindow() {
 //-----------------------------------------------
 // Event listeners
 //-----------------------------------------------
-ipcMain.on('invoice-preview', (event, invoiceData) => {
+ipcMain.on('invoice-preview', (event, client, invoiceData) => {
   let previewWindow = new BrowserWindow({parent: window, width: 800, height: 1000})
   previewWindow.loadURL(
     `file://${__dirname}/ui/x-invoice-preview.html`
   )
   //previewWindow.webContents.openDevTools()
   ipcMain.once('invoice-preview-ready', (event) => {
-    event.sender.send('invoice-data', invoiceData)
+    event.sender.send('invoice-data', client, invoiceData)
   })
 })
 
-ipcMain.on('invoice-save', (event, clients, opts) => {
-  invoice.savePdf(clients, opts, `${__dirname}/../laskut`)
+ipcMain.on('invoice-save', (event, clients, invoiceData, opts) => {
+  invoice.saveInvoicePdf(clients, invoiceData, opts, `${__dirname}/../laskut`)
 })
 
 
