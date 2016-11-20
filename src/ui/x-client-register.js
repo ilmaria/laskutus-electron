@@ -8,24 +8,29 @@
   Polymer({
     is: 'x-client-register',
 
-    properties: {
-      selectedClient: {
-        type: Object,
-        value: () => Object.create(null)
-      },
-      pdfFields: {
-        type: Array,
-        computed: 'updatePdfFields(selectedClient)'
-      }
-    },
-
     ready() {
       const grid = this.$['register-grid']
       const registerFile = config.get('registerFile')
-      const view = registerFile ? 'register-view' : 'register-selection'
       
-      this.$['view'].select(view)
-
+      /**
+       * Check if the register file saved in config exists and then
+       * parse it and add its data to the Vaadin grid. If the register
+       * file doesn't exist, open the register selection dialog.
+       */
+      fs.access(registerFile, fs.F_OK, (err) => {
+        if (!err) {
+          const register = importRegister(registerFile)
+          renderToGrid(grid, register)
+          this.$['view'].select('register-view')
+        } else {
+          this.$['view'].select('register-selection')
+        }
+      })
+      
+      /**
+       * Button listener for submitting a selected client register file.
+       * Parses the file and adds its content to the Vaadin grid.
+       */
       this.$['select-register-btn'].addEventListener('change', (event) => {
         const file = event.target.files[0]
         if (file) {
@@ -35,20 +40,31 @@
         }
       })
 
+      /**
+       * Preview the invoice for the selected client.
+       */
       this.$['preview-btn'].addEventListener('click', () => {
-        const client = this.getClientData()
-        if (client) {
-          ipcRenderer.send('invoice-preview', client, getInvoiceData())
+        const clients = getSelectedClients(grid)
+        if (clients.length) {
+          ipcRenderer.send('invoice-preview', clients[0], this.getInvoiceData())
         }
       })
 
+      /**
+       * Save invoices for selected clients as PDF.
+       */
       this.$['save-btn'].addEventListener('click', () => {
-        const client = this.getClientData()
-        if (client) {
-          ipcRenderer.send('invoice-save', [client], getInvoiceData(), opts)
+        const clients = getSelectedClients(grid)
+        if (clients.length) {
+          const opts = {}
+          
+          ipcRenderer.send('invoice-save', clients, this.getInvoiceData(), opts)
         }
       })
 
+      /**
+       * Save invoices for all clients in the register.
+       */
       this.$['save-all-btn'].addEventListener('click', () => {
         const allClients = grid.items || []
 
@@ -56,75 +72,98 @@
           excludeCol: {}
         }
 
-        if (this.$['exclude-rahoitus-vastike'].checked) {
+        if (this.$['exclude-rahoitusvastike-ok'].checked) {
           opts.excludeCol['rahoitusvastike'] = 'OK'
         }
 
-        ipcRenderer.send('invoice-save', allClients, opts)
+        ipcRenderer.send('invoice-save', allClients, this.getInvoiceData(), opts)
       })
       
+      /**
+       * Disable save button when selected clients arrays is empty.
+       */
       grid.addEventListener('selected-items-changed', () => {
         const selected = grid.selection.selected()
-        if (selected.length) {
-          const clientIndex = grid.selection.selected()[0]
-          const client = grid.items[clientIndex]
-          this.selectedClient = client
-          /*
-          grid.getItem(clientIndex, (err, elem) => {
-            console.log(elem)
-            
-            if (err) return
-            
-            const focusOutFn = () => {
-              grid.selection.deselect(clientIndex)
-              elem.removeEventListener(focusOutFn)
-            }
-            
-            elem.addEventListener('focusout', focusOutFn)
-          })
-          */
-          this.$['save-btn'].disabled = false
-        } else {
-          this.$['save-btn'].disabled = true
-        }
-      })
-
-      fs.access(registerFile, fs.F_OK, (err) => {
-        if (!err) {
-          const register = importRegister(registerFile)
-          renderToGrid(grid, register)
-        }
-      })
-    },
-    
-    getClientData() {
-      const inputs = Polymer.dom(this.$['field-editor'])
-        .querySelectorAll('paper-input')
         
-      let isEmpty = true
-      const client = inputs.reduce((data, item) => {
-        if (item.value !== '') {
-          isEmpty = false
-        }
-        data[item.label] = item.value
-        return data
-      }, {})
-      
-      return isEmpty ? null : client
+        this.$['save-btn'].disabled = !selected.length
+      })
     },
     
-    updatePdfFields
+    /**
+     * Get data that will be same for all created invoices.
+     * @return {Object}
+     */
+    getInvoiceData() {
+      const {
+        laskunumero,  maksuehto, viivästyskorko
+      } = config.get('invoiceSettings')
+
+      return {
+        päiväys: new Date(Date.now()).toLocaleDateString(),
+        laskunumero,
+        maksuehto,
+        viivästyskorko,
+        viesti: '',
+        products: this.getProductList()
+      }
+    },
+
+    /**
+     * Add all selected products to the product list.
+     * @return {Object[]} - Return a list of product objects.
+     */
+    getProductList() {
+      let productList = []
+
+      if (this.$['perusvastike'].checked) {
+        const product = {
+          name: 'Perusvastike',
+          id: 'P 528',
+          price: 110,
+          count: 1,
+          tax: 0.12
+        }
+        productList.push(product)
+      }
+
+      if (this.$['käyttövastike'].checked) {
+        const product = {
+          name: 'Käyttövastike',
+          id: 'P 448',
+          price: 210,
+          count: 1,
+          tax: 0.11
+        }
+        productList.push(product)
+      }
+
+      if (this.$['rahoitusvastike'].checked) {
+        const product = {
+          name: 'Rahoitusvastike',
+          id: 'P 548',
+          price: 110,
+          count: 1,
+          tax: 0.10
+        }
+        productList.push(product)
+      }
+
+      return productList
+    }
   })
   
-  function updatePdfFields(selectedClient = {}) {
-    return invoice.fieldNames.reduce((arr, field) => {
-      const value = selectedClient[field] !== undefined ?
-        selectedClient[field] : ''
-        
-      arr.push({name: field, value: value})
-      
-      return arr
-    }, [])
+  
+  /**
+   * Get all selected clients in the table `grid`. This function
+   * assumes that the Vaadin grid `items` property is an array and not a function.
+   * @param {Object} grid - Vaadin grid object.
+   * @return {Object[]} Return list of client objects
+   */
+  function getSelectedClients(grid) {
+    // indices of selected items
+    const selected = grid.selection.selected()
+    
+    return selected.map(index => grid.items[index])
   }
 
   /**
@@ -142,7 +181,7 @@
   /**
    * Transform js-xlsx data to be compatible with vaadin-grid and
    * bind the data to an existing grid.
-   * @param {Object} grid - Vaadin-grid to bind the worksheet data.
+   * @param {Object} grid - Vaadin grid to bind the worksheet data.
    * @param {Object} worksheet - Js-xlsx worksheet that contains the
    * client register.
    */
@@ -166,69 +205,6 @@
     
     grid.columns = columns
     grid.items = register
-  }
-
-  /**
-   * Get data that will be same for all created invoices.
-   * @return {Object}
-   */
-  function getInvoiceData() {
-    const {
-      laskunumero,  maksuehto, viivästyskorko
-    } = config.get('invoiceSettings')
-
-    return {
-      päiväys: new Date.now().toLocaleDateString(),
-      laskunumero,
-      maksuehto,
-      viivästyskorko,
-      viesti: '',
-      products: getProductList()
-    }
-  }
-
-  /**
-   * Add all selected products to the product list.
-   * @return {Object[]} - Return a list of product objects.
-   */
-  function getProductList() {
-    let productList = []
-    console.log('id="perusvastike" - ', this.$['perusvastike'])
-
-    if (this.$['perusvastike'].checked) {
-      const product = {
-        name: 'Perusvastike',
-        id: 'P 528',
-        price: 110,
-        count: 1,
-        tax: 0.12
-      }
-      productList.push(product)
-    }
-
-    if (this.$['käyttövastike'].checked) {
-      const product = {
-        name: 'Käyttövastike',
-        id: 'P 448',
-        price: 210,
-        count: 1,
-        tax: 0.11
-      }
-      productList.push(product)
-    }
-
-    if (this.$['rahoitusvastike'].checked) {
-      const product = {
-        name: 'Rahoitusvastike',
-        id: 'P 548',
-        price: 110,
-        count: 1,
-        tax: 0.10
-      }
-      productList.push(product)
-    }
-
-    return productList
   }
 
 })()

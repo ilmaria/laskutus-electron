@@ -25,8 +25,11 @@ const config = new Config({ defaults: {
   invoiceSettings: {
     laskunumero: '1000',
     maksuehto: '21pv netto',
-    viivästyskorko: 0.075
-  }
+    viivästyskorko: '7,5%'
+  },
+  
+  // Where to save invoices. Relative to `main.js` file.
+  invoiceSavePath: '../laskut'
 }})
 
 module.exports = config

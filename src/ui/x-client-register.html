@@ -85,16 +85,15 @@
               </div>
               
               <div id="vastike-filter">
-                <paper-checkbox id="exclude-rahoitusvastike-ok" checked>Älä laskuta, jos asiakasrekisterissä vastikesarakkeen arvo on "OK"</paper-checkbox>
+                <paper-checkbox id="exclude-rahoitusvastike-ok" checked>
+                  Älä laskuta, jos asiakasrekisterissä vastikesarakkeen arvo on "OK"
+                </paper-checkbox>
               </div>
               
             </div>
             
             <!--Invoice fields-->
             <div id="field-editor">
-              <template is="dom-repeat" items="{{pdfFields}}">
-                <paper-input label="[[item.name]]" value="{{item.value}}"></paper-input>
-              </template>
             </div>
             
           </iron-pages>

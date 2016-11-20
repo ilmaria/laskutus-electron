@@ -266,13 +266,17 @@ function saveInvoicePdf(clients, invoiceData, opts, dir) {
   }
 
   for (const client of clients) {
+    let skip = false
+    
     // if column is excluded then skip client
-    const skip = Object.keys(opts.excludeCol).find(col => {
-      return client[col] === opts.excludeCol[col]
-    })
+    if (opts.excludeCol) {
+      skip = Object.keys(opts.excludeCol).find(col => {
+        return client[col] === opts.excludeCol[col]
+      })
+    }
 
-    if (!skip) {
-      const name = client.nimi.replace(/ /g, '_') || 'nimetön'
+    if (!skip && client.nimi) {
+      const name = client.nimi.replace(/[ _\\\/]/g, '_') || 'nimetön'
       const number = client.numero
       const file = path.join(dir, `${name}_${number}.pdf`)
 

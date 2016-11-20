@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain } = electron
 const chokidar = require('chokidar')
 const config = require('./config')
 const invoice = require('./invoice')
+const path = require('path')
 
 let window
 
@@ -50,7 +51,8 @@ ipcMain.on('invoice-preview', (event, client, invoiceData) => {
 })
 
 ipcMain.on('invoice-save', (event, clients, invoiceData, opts) => {
-  invoice.saveInvoicePdf(clients, invoiceData, opts, `${__dirname}/../laskut`)
+  invoice.saveInvoicePdf(clients, invoiceData, opts,
+    path.join(__dirname, config.get('invoiceSavePath')))
 })
 
 
