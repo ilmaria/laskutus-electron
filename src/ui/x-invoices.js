@@ -1,3 +1,3 @@
 Polymer({
-  is: 'x-invoices'
-})
+    is: 'x-invoices'
+});

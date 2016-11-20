@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "typeRoots": ["./typings"],
+    "noImplicitAny": true,
+    "noImplicitReturns": true
+  },
+  "compileOnSave": true,
+  "exclude": [
+    "node_modules",
+    "bower_components"
+  ]
+}

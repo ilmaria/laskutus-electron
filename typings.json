@@ -1,0 +1,9 @@
+{
+  "globalDependencies": {
+    "electron": "registry:env/electron#0.37.6+20160909065630",
+    "node": "registry:dt/node#6.0.0+20161110151007"
+  },
+  "dependencies": {
+    "chokidar": "registry:npm/chokidar#1.6.0+20160817083815"
+  }
+}
