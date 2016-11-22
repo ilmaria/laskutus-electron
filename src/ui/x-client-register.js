@@ -11,7 +11,7 @@
     ready() {
       const grid = this.$['register-grid']
       const registerFile = config.get('registerFile')
-      
+
       /**
        * Check if the register file saved in config exists and then
        * parse it and add its data to the Vaadin grid. If the register
@@ -26,7 +26,7 @@
           this.$['view'].select('register-selection')
         }
       })
-      
+
       /**
        * Button listener for submitting a selected client register file.
        * Parses the file and adds its content to the Vaadin grid.
@@ -57,7 +57,7 @@
         const clients = getSelectedClients(grid)
         if (clients.length) {
           const opts = {}
-          
+
           ipcRenderer.send('invoice-save', clients, this.getInvoiceData(), opts)
         }
       })
@@ -78,17 +78,17 @@
 
         ipcRenderer.send('invoice-save', allClients, this.getInvoiceData(), opts)
       })
-      
+
       /**
        * Disable save button when selected clients arrays is empty.
        */
       grid.addEventListener('selected-items-changed', () => {
         const selected = grid.selection.selected()
-        
+
         this.$['save-btn'].disabled = !selected.length
       })
     },
-    
+
     /**
      * Get data that will be same for all created invoices.
      * @return {Object}
@@ -151,8 +151,8 @@
       return productList
     }
   })
-  
-  
+
+
   /**
    * Get all selected clients in the table `grid`. This function
    * assumes that the Vaadin grid `items` property is an array and not a function.
@@ -162,7 +162,7 @@
   function getSelectedClients(grid) {
     // indices of selected items
     const selected = grid.selection.selected()
-    
+
     return selected.map(index => grid.items[index])
   }
 
@@ -189,7 +189,7 @@
     const range = xlxs.utils.decode_range(worksheet['!ref'])
     const register = xlxs.utils.sheet_to_json(worksheet)
     let columns = []
-    
+
     const startIdx = range.s.c
     const endIdx = range.e.c
     const headerRow = range.s.r
@@ -197,12 +197,12 @@
     for (let i = startIdx; i < endIdx; i++) {
       const cellAddress = xlxs.utils.encode_cell({c: i, r: headerRow})
       const cell = worksheet[cellAddress]
-      
+
       if (cell) {
         columns.push({name: cell.v})
       }
     }
-    
+
     grid.columns = columns
     grid.items = register
   }

@@ -41,6 +41,7 @@ module.exports = {
 /**
  * Create an invoice PDF in memory. Pipe it to a file stream to save it.
  * @param {Object} invoiceData
+ * @return {Object} Returns PDF document object.
  */
 function createInvoicePdf(client, invoiceData) {
   const doc = new PDFDocument({autoFirstPage: false})
@@ -53,7 +54,7 @@ function createInvoicePdf(client, invoiceData) {
   const MARGIN_RIGHT = 612 - 40
   const DEFAULT_FONT = 12
   const BIG_FONT = 16
-  
+
   const {
     nimi, lähiosoite, postitoimipaikka, numero
   } = client
@@ -69,7 +70,7 @@ function createInvoicePdf(client, invoiceData) {
   //-----------------------------------------------
   doc.text('LAPPAJÄRVEN LOMA-GOLF OY', MARGIN_LEFT, MARGIN_TOP)
   doc.moveDown(3)
-  
+
   // Recipient name and address
   doc.text([
     nimi,
@@ -89,7 +90,7 @@ function createInvoicePdf(client, invoiceData) {
     '',
     'HUOM! Uusi tilinumero.'
   ].join('\n'), 315, MARGIN_TOP)
-  
+
   doc.text([
     päiväys,
     '',
@@ -114,7 +115,7 @@ function createInvoicePdf(client, invoiceData) {
   const TAXLESS_H = 370
   const TAXLESS = TAXLESS_H - 5
   const TAX = 430
-  const TOTAL = 480 
+  const TOTAL = 480
   doc.text('Tuote', MARGIN_LEFT, PRODUCT_LIST_HEADER)
   doc.text('à-hinta', PRICE_H, PRODUCT_LIST_HEADER)
   doc.text('Määrä', COUNT_H, PRODUCT_LIST_HEADER)
@@ -130,7 +131,7 @@ function createInvoicePdf(client, invoiceData) {
     .moveTo(MARGIN_LEFT - 10, HEADER_DASH)
     .lineTo(MARGIN_RIGHT + 10, HEADER_DASH)
     .stroke()
-    
+
 
   //-----------------------------------------------
   //PRODUCT LIST
@@ -141,7 +142,7 @@ function createInvoicePdf(client, invoiceData) {
     const product = products[i]
     const totalPrice = product.price * product.count
     productYCoord = START_Y_COORD + i*25
-    
+
     //name
     doc.text(`${product.name}, ${product.id}`, MARGIN_LEFT, productYCoord)
     //à-price
@@ -156,30 +157,30 @@ function createInvoicePdf(client, invoiceData) {
     doc.text(formatMoney(totalPrice * (1 + product.tax)), TOTAL,
       productYCoord, {align: 'right'})
   }
-  
+
   const [totalPrice, totalTax] = products.reduce((total, product) => {
     const price = product.price * product.count
     const tax = price * product.tax
     return [total[0] + price, total[1] + tax]
   }, [0, 0])
-  
+
   const TOTAL_Y = productYCoord + 50
   doc.text('Yhteensä:', PRICE, TOTAL_Y)
   doc.text(formatMoney(totalPrice), TAXLESS, TOTAL_Y)
   const finalPrice = formatMoney(totalPrice + totalTax)
   doc.text(finalPrice,
     TOTAL, TOTAL_Y, {align: 'right'})
-  
+
   const MESSAGE = TOTAL_Y + 70
   doc.text(viesti, MARGIN_LEFT, MESSAGE)
-  
+
 
   //-----------------------------------------------
   //PAYMENT INFO
   //-----------------------------------------------
   const RECEIVER_INFO = 550
   const viitenumero = '002' + numero
-  
+
   doc.text([
     'Saaja / Mottagare:',
     'Tilinumero / Kontonummer (IBAN):',
@@ -188,9 +189,9 @@ function createInvoicePdf(client, invoiceData) {
     'Maksu / Betalningen:'
   ].join('\n'), MARGIN_LEFT, RECEIVER_INFO,
     {paragraphGap: 6})
-  
+
   const RECEIVER_INFO_LEFT = MARGIN_LEFT + 200
-  
+
   doc.font('Helvetica-Bold')
     .fontSize(BIG_FONT)
 
@@ -202,10 +203,10 @@ function createInvoicePdf(client, invoiceData) {
     finalPrice
   ].join('\n'), RECEIVER_INFO_LEFT, RECEIVER_INFO - 2,
     {paragraphGap: 1})
-  
+
   doc.font('Helvetica')
     .fontSize(DEFAULT_FONT)
-  
+
 
   //-----------------------------------------------
   //FOOTER
@@ -216,19 +217,19 @@ function createInvoicePdf(client, invoiceData) {
     .moveTo(MARGIN_LEFT - 10, FOOTER)
     .lineTo(MARGIN_RIGHT + 10, FOOTER)
     .stroke()
-  
+
   doc.text(JSG.name, MARGIN_LEFT, FOOTER + 5,
       {continued: true})
     .text(`Y-tunnus: ${JSG.yTunnus}`,
       {align: 'right'})
-  
+
   doc.text(`Puh. ${JSG.tel}`, MARGIN_LEFT, FOOTER + 5,
       {align: 'center'})
     .text(JSG.email, {align: 'center'})
     .moveUp()
     .text(JSG.address)
     .text(JSG.postalAddress)
-    
+
   doc.end()
 
   return doc
@@ -256,7 +257,7 @@ function formatMoney(number) {
  * @param {Object} invoiceData - Invoice fields that will be same for all invoices.
  * @param {Object} opts - Other options for invoices. Same options will be
  * used for all saved invoices.
- * @param {string} dir - Directory to save invoice files.   
+ * @param {string} dir - Directory to save invoice files.
  */
 function saveInvoicePdf(clients, invoiceData, opts, dir) {
   try {
@@ -267,7 +268,7 @@ function saveInvoicePdf(clients, invoiceData, opts, dir) {
 
   for (const client of clients) {
     let skip = false
-    
+
     // if column is excluded then skip client
     if (opts.excludeCol) {
       skip = Object.keys(opts.excludeCol).find(col => {

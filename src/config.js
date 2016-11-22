@@ -7,10 +7,10 @@ const config = new Config({ defaults: {
     width: 1600,
     height: 1200
   },
-  
+
   // Register file's path
   registerFile: '',
-  
+
   // Company information
   JSG: {
     name: 'Lappajärven Loma-Golf Oy',
@@ -27,7 +27,7 @@ const config = new Config({ defaults: {
     maksuehto: '21pv netto',
     viivästyskorko: '7,5%'
   },
-  
+
   // Where to save invoices. Relative to `main.js` file.
   invoiceSavePath: '../laskut'
 }})

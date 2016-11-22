@@ -33,7 +33,7 @@
         -webkit-column-break-inside: avoid;
       }
     </style>
-    
+
     <iron-pages id="view" attr-for-selected="id">
 
       <div id="register-selection">
@@ -42,7 +42,7 @@
       </div>
 
       <div id="register-view">
-        
+
         <!--Register grid-->
         <vaadin-grid id="register-grid"></vaadin-grid>
 
@@ -65,12 +65,12 @@
               </paper-tab>
             </paper-tabs>
           </paper-toolbar>
-          
+
           <iron-pages class="pr2" selected="{{selected}}">
-            
+
             <!--Filters-->
             <div id="filters">
-              
+
               <div id="vastike-selector">
                 <h4 class="mb1">Laskutettava vastike</h4>
                 <div class="mb2">
@@ -83,23 +83,23 @@
                   <paper-checkbox id="rahoitusvastike">Rahoitusvastike</paper-checkbox>
                 </div>
               </div>
-              
+
               <div id="vastike-filter">
                 <paper-checkbox id="exclude-rahoitusvastike-ok" checked>
                   Älä laskuta, jos asiakasrekisterissä vastikesarakkeen arvo on "OK"
                 </paper-checkbox>
               </div>
-              
+
             </div>
-            
+
             <!--Invoice fields-->
             <div id="field-editor">
             </div>
-            
+
           </iron-pages>
-          
+
         </div>
-        
+
         </section>
 
     </iron-pages>
