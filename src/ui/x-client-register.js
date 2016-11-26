@@ -8,6 +8,29 @@
   Polymer({
     is: 'x-client-register',
 
+    properties: {
+      invoiceSettings: {
+        type: Array,
+        value: () => {
+          const settings = config.get('invoiceSettings')
+          return [
+            { label: 'Laskunumeron etuliite',
+              value: settings.laskunumero
+            },
+            { label: 'Maksuehto',
+              value: settings.maksuehto
+            },
+            { label: 'Viivästyskorko',
+              value: settings.viivästyskorko
+            }]
+        }
+      }
+    },
+
+    observers: [
+      'invoiceSettingsChanged(invoiceSettings.*)'
+    ],
+
     ready() {
       const grid = this.$['register-grid']
       const registerFile = config.get('registerFile')
@@ -149,8 +172,30 @@
       }
 
       return productList
+    },
+
+    /**
+     * Save changed settings to config.
+     * @param {Object} change
+     * @param {string} change.path - Object path of the changed property.
+     * @param {string} change.value - Value the changed property.
+     */
+    invoiceSettingsChanged({path, value}) {
+      const pathTable = {
+        '#0': 'laskunumero',
+        '#1': 'maksuehto',
+        '#2': 'viivästyskorko'
+      }
+
+      // Save settings only every 100 ms
+      this.debounce('invoiceSettingsChanged', () => {
+        // Match with pattern like `#1`.
+        const match = path.match(/#\d+/)
+        const key = match ? match[0] : null
+        config.set(`invoiceSettings.${pathTable[key]}`, value)
+      }, 100)
     }
-  })
+  }) // end Polymer()
 
 
   /**

@@ -1,5 +1,11 @@
-- bug: program is unresponsive while saving many files
+# Todo
 
-- custom products for invoices
+## bugs
+  - program is unresponsive while saving many files
 
-- archive invoices?
+## invoice settings
+  - add confirm dialog for changes
+
+## custom products for invoices
+
+## archive invoices?
