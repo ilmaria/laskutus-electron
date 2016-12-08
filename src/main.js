@@ -1,9 +1,12 @@
 const electron = require('electron')
 const { app, BrowserWindow, ipcMain } = electron
-const chokidar = require('chokidar')
 const config = require('./config')
 const invoice = require('./invoice')
 const path = require('path')
+
+if (process.env.NODE_ENV === 'development') {
+  var chokidar = require('chokidar')
+}
 
 let window
 
@@ -59,12 +62,14 @@ ipcMain.on('invoice-save', (event, clients, invoiceData, opts) => {
 //-----------------------------------------------
 // Watch file changes
 //-----------------------------------------------
-chokidar.watch([`${__dirname}/ui/**/*`])
-  .on('change', () => {
-    if (window) {
-      window.reload()
-    }
-  })
+if (process.env.NODE_ENV === 'development') {
+  chokidar.watch([`${__dirname}/ui/**/*`])
+    .on('change', () => {
+      if (window) {
+        window.reload()
+      }
+    })
+}
 
 //-----------------------------------------------
 // App events
