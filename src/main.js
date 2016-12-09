@@ -1,32 +1,40 @@
 const electron = require('electron')
-const { app, BrowserWindow, ipcMain } = electron
+const { app, BrowserWindow, ipcMain, autoUpdater } = electron
 const config = require('./config')
 const invoice = require('./invoice')
 const path = require('path')
+const os = require('os')
 
-if (process.env.NODE_ENV === 'development') {
+const DEV_ENV = process.env.NODE_ENV === 'development'
+const UPDATE_SERVER = 'https://laskutus-electron.herokuapp.com/'
+
+if (DEV_ENV) {
   var chokidar = require('chokidar')
 }
 
-let window
+if(require('electron-squirrel-startup')) {
+  app.quit()
+}
+
+let mainWindow
 
 //-----------------------------------------------
 // Main function
 //-----------------------------------------------
-function createWindow() {
-  window = new BrowserWindow({
+function createMainWindow() {
+  mainWindow = new BrowserWindow({
     width: config.get('window.width'),
     height: config.get('window.height'),
     x: config.get('window.x'),
     y: config.get('window.y')
   })
 
-  window.loadURL(`file://${__dirname}/ui/index.html`)
+  mainWindow.loadURL(`file://${__dirname}/ui/index.html`)
 
-  window.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
-  window.on('close', () => {
-    const win = window.getBounds()
+  mainWindow.on('close', () => {
+    const win = mainWindow.getBounds()
 
     config.set('window.x', win.x)
     config.set('window.y', win.y)
@@ -34,8 +42,8 @@ function createWindow() {
     config.set('window.width', win.width)
   })
 
-  window.on('closed', () => {
-    window = null
+  mainWindow.on('closed', () => {
+    mainWindow = null
   })
 }
 
@@ -43,10 +51,12 @@ function createWindow() {
 // Event listeners
 //-----------------------------------------------
 ipcMain.on('invoice-preview', (event, client, invoiceData) => {
-  let previewWindow = new BrowserWindow({parent: window, width: 800, height: 1000})
+  const previewWindow = new BrowserWindow(
+    {parent: mainWindow, width: 800, height: 1000})
+
   previewWindow.loadURL(
-    `file://${__dirname}/ui/x-invoice-preview.html`
-  )
+    `file://${__dirname}/ui/x-invoice-preview.html`)
+
   //previewWindow.webContents.openDevTools()
   ipcMain.once('invoice-preview-ready', (event) => {
     event.sender.send('invoice-data', client, invoiceData)
@@ -62,11 +72,11 @@ ipcMain.on('invoice-save', (event, clients, invoiceData, opts) => {
 //-----------------------------------------------
 // Watch file changes
 //-----------------------------------------------
-if (process.env.NODE_ENV === 'development') {
+if (DEV_ENV) {
   chokidar.watch([`${__dirname}/ui/**/*`])
     .on('change', () => {
-      if (window) {
-        window.reload()
+      if (mainWindow) {
+        mainWindow.reload()
       }
     })
 }
@@ -74,7 +84,13 @@ if (process.env.NODE_ENV === 'development') {
 //-----------------------------------------------
 // App events
 //-----------------------------------------------
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createMainWindow()
+
+  if (!DEV_ENV) {
+    initAutoUpdates(window)
+  }
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -83,7 +99,35 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (window === null) {
-    createWindow()
+  if (mainWindow === null) {
+    createMainWindow()
   }
 })
+
+function initAutoUpdates() {
+  if (os.platform() === 'linux') {
+    return
+  }
+
+  autoUpdater.setFeedURL(UPDATE_SERVER)
+
+  autoUpdater.on('update-downloaded', () => {
+    const notificationWindow = new BrowserWindow(
+      {parent: mainWindow, width: 400, height: 600, modal: true})
+
+    notificationWindow.loadURL(
+      `file://${__dirname}/ui/x-update-notification.html`)
+
+    ipcMain.once('close-notification-window', () => {
+      notificationWindow.close()
+    })
+
+    ipcMain.once('quit-and-update', () => {
+      autoUpdater.quitAndInstall()
+    })
+  })
+
+  mainWindow.webContents.once("did-frame-finish-load", () => {
+    autoUpdater.checkForUpdates()
+  })
+}

@@ -1,0 +1,20 @@
+<link rel="import" href="css/citric-flames.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module is="x-update-notification">
+  <template>
+    <style is="custom-style" include="basscss citric-flames"></style>
+
+    <h1>Päivitys saatavilla</h1>
+    <p>
+      Uusi ohjelmaversio on saatavilla. Haluatko käynnistää ohjelman uudelleen
+      ja asentaa uuden version?
+    </p>
+
+    <paper-button raised class="primary" on-tap="closeWindow">Ei</paper-button>
+    <paper-button raised class="primary" on-tap="quitAndUpdate">Kyllä</paper-button>
+
+  </template>
+
+  <script src="x-update-notification.js"></script>
+</dom-module>
