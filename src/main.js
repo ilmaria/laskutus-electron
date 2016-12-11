@@ -88,7 +88,7 @@ app.on('ready', () => {
   createMainWindow()
 
   if (!DEV_ENV) {
-    initAutoUpdates(window)
+    initAutoUpdates()
   }
 })
 
