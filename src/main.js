@@ -1,19 +1,15 @@
 const electron = require('electron')
-const { app, BrowserWindow, ipcMain, autoUpdater } = electron
+const { app, BrowserWindow, ipcMain } = electron
 const config = require('./config')
 const invoice = require('./invoice')
 const path = require('path')
 const os = require('os')
+const { autoUpdater } = require('electron-auto-updater')
 
 const DEV_ENV = process.env.NODE_ENV === 'development'
-const UPDATE_SERVER = 'https://laskutus-electron.herokuapp.com/'
 
 if (DEV_ENV) {
   var chokidar = require('chokidar')
-}
-
-if(require('electron-squirrel-startup')) {
-  app.quit()
 }
 
 let mainWindow
@@ -104,14 +100,14 @@ app.on('activate', () => {
   }
 })
 
+app.setAppUserModelId('com.squirrel.laskutus-electron.laskutus-electron')
+
 function initAutoUpdates() {
   if (os.platform() === 'linux') {
     return
   }
 
-  autoUpdater.setFeedURL(UPDATE_SERVER)
-
-  autoUpdater.on('update-downloaded', () => {
+  autoUpdater.addListener('update-downloaded', () => {
     const notificationWindow = new BrowserWindow(
       {parent: mainWindow, width: 400, height: 600, modal: true})
 
