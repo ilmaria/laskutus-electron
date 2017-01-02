@@ -33,6 +33,9 @@
     "appId": "com.squirrel.laskutus-electron.laskutus-electron",
     "win": {
       "publish": ["github"]
+    },
+    "squirrelWindows": {
+      "remoteReleases": true
     }
   }
 }

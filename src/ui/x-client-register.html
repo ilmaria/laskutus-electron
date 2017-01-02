@@ -43,14 +43,14 @@
 
       <div id="register-view">
 
-        <!--Register grid-->
+        <!-- Register grid -->
         <vaadin-grid id="register-grid"></vaadin-grid>
 
-        <paper-button id="preview-btn" raised class="primary">Esikatselu 2</paper-button>
+        <paper-button id="preview-btn" raised class="primary">Esikatselu</paper-button>
         <paper-button id="save-btn" raised disabled class="primary">Tallenna</paper-button>
         <paper-button id="save-all-btn" raised class="primary">Tallenna kaikki</paper-button>
 
-        <!--Settings-->
+        <!-- Settings -->
         <section id="invoice-settings">
           <paper-toolbar>
             <paper-tabs selected="{{selected}}" fallback-selection="0" no-slide>
@@ -68,7 +68,7 @@
 
           <iron-pages class="pr2" selected="{{selected}}">
 
-            <!--Filters-->
+            <!-- Filters -->
             <div id="filters">
 
               <div id="vastike-selector">
@@ -92,7 +92,7 @@
 
             </div>
 
-            <!--Invoice settings-->
+            <!-- Invoice settings -->
             <div id="invoice-settings-tab">
               <template is="dom-repeat" items="{{invoiceSettings}}">
                 <paper-input label="[[item.label]]" value="{{item.value}}"></paper-input>

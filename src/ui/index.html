@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="fi">
   <head>
-    
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <title>Laskutus.js</title>
     <meta name="description" content="Laskujen luonti.">
 
@@ -13,7 +13,7 @@
         dom: 'shadow',
         useNativeCSSProperties: true
       };
-      
+
       //default location
       if (window.location.hash === '') {
         window.location.href += '#client-register';
@@ -27,27 +27,27 @@
 
     <link rel="import" href="../../bower_components/app-route/app-route.html">
     <link rel="import" href="../../bower_components/app-route/app-location.html">
-    
+
     <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
     <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
     <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
     <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
-    
+
     <link rel="import" href="x-client-register.html">
-    <link rel="import" href="x-invoices.html">
+    <link rel="import" href="x-products.html">
     <link rel="import" href="x-archive.html">
-    
-    <!--custom styles-->    
+
+    <!--custom styles-->
     <link rel="import" href="css/main-styles.html">
     <link rel="import" href="css/basscss.html">
     <link rel="import" href="css/citric-flames.html">
     <style is="custom-style"
       include="main-styles basscss citric-flames iron-flex">
     </style>
-    
+
   </head>
-  
+
   <body fullbleed>
     <template is="dom-bind">
 
@@ -68,7 +68,7 @@
                 <paper-item>Asiakasrekisteri</paper-item>
               </a>
               <a href="#invoices">
-                <paper-item>Laskut</paper-item>
+                <paper-item>Tuotteet</paper-item>
               </a>
               <a href="#archive">
                 <paper-item>Arkisto</paper-item>
@@ -81,7 +81,7 @@
         <main>
           <iron-pages selected="[[route.path]]" attr-for-selected="data-path">
             <x-client-register data-path="client-register"></x-client-register>
-            <x-invoices data-path="invoices"></x-invoices>
+            <x-products data-path="invoices"></x-products>
             <x-archive data-path="archive"></x-archive>
           </iron-pages>
         </main>
