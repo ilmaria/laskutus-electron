@@ -4,9 +4,9 @@
   "description": "Laskutusjärjestelmä",
   "author": "Ilmari Autio",
   "main": "src/main.js",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/ilmaria/laskutus-electron.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ilmaria/laskutus-electron.git"
   },
   "dependencies": {
     "accounting": "^0.4.1",
@@ -15,6 +15,7 @@
     "electron-config": "^0.2.1",
     "jszip": "^3.0.0",
     "pdfkit": "^0.7.2",
+    "pouchdb": "^6.1.0",
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
@@ -32,7 +33,9 @@
   "build": {
     "appId": "com.squirrel.laskutus-electron.laskutus-electron",
     "win": {
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "squirrelWindows": {
       "remoteReleases": true

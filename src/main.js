@@ -108,7 +108,7 @@ function initAutoUpdates() {
   }
 
   autoUpdater.addListener('update-downloaded', () => {
-    mainWindow.webContents.executeJavaScript('console.log("update downloaded")')
+    log('update downloaded')
     const notificationWindow = new BrowserWindow(
       {parent: mainWindow, width: 400, height: 600, modal: true})
 
@@ -125,20 +125,24 @@ function initAutoUpdates() {
   })
 
   autoUpdater.addListener('checking-for-update', () => {
-    mainWindow.webContents.executeJavaScript('console.log("checking-for-update")')
+    log('checking-for-update')
   })
   autoUpdater.addListener('update-available', () => {
-    mainWindow.webContents.executeJavaScript('console.log("update-available")')
+    log('update-available')
   })
   autoUpdater.addListener('update-not-available', () => {
-    mainWindow.webContents.executeJavaScript('console.log("update-not-available")')
+    log('update-not-available')
   })
   autoUpdater.addListener('error', (err) => {
-    mainWindow.webContents.executeJavaScript(`console.log(\`error: ${err.toString()}\`)`)
+    log(err)
   })
 
   mainWindow.webContents.once("did-frame-finish-load", () => {
-    mainWindow.webContents.executeJavaScript('console.log("start checking updates")')
+    log('start checking updates')
     autoUpdater.checkForUpdates()
   })
+}
+
+function log(msg) {
+  mainWindow.webContents.executeJavaScript(`console.log(\`${msg}\`)`)
 }

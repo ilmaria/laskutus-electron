@@ -5,3 +5,4 @@ bower_components/
 laskutusrekisteri*.xlsx
 build/
 dist/
+database/
