@@ -5,10 +5,15 @@ const db = new PouchDB('database', {
 })
 
 module.exports = {
-  all
+  all, put
 }
 
 function all() {
   return db.allDocs({ include_docs: true })
     .then(result => result.rows)
+    .then(rows => rows.map(x => x.doc))
+}
+
+function put(item) {
+  return db.put(item)
 }

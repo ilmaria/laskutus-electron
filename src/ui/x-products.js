@@ -6,9 +6,15 @@ Polymer({
   is: 'x-products',
 
   ready() {
-    const productList = this['product-list']
+    const productList = this.$['product-list']
 
-    db.all().then(console.log.bind(console))
+    db.all().then(products => {
+      productList.columns = [
+        {name: '_id'},
+        {name: 'hinta'}
+      ]
+      productList.items = products
+    })
   }
 })
 
