@@ -1,21 +1,26 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
 {
-const { remote } = require('electron')
-const db = remote.require('./database')
-
-Polymer({
-  is: 'x-products',
-
-  ready() {
-    const productList = this.$['product-list']
-
-    db.all().then(products => {
-      productList.columns = [
-        {name: '_id'},
-        {name: 'hinta'}
-      ]
-      productList.items = products
-    })
-  }
-})
-
+    const { remote } = require('electron');
+    const db = remote.require('./database');
+    Polymer({
+        is: 'x-products',
+        ready() {
+            return __awaiter(this, void 0, void 0, function* () {
+                const productList = this.$['product-list'];
+                const products = yield db.all();
+                productList.columns = [
+                    { name: '_id' },
+                    { name: 'hinta' }
+                ];
+                productList.items = products;
+            });
+        }
+    });
 }

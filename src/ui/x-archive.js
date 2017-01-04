@@ -1,3 +1,3 @@
 Polymer({
-  is: 'x-archive'
-})
+    is: 'x-archive'
+});

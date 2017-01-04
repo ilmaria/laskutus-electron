@@ -6,3 +6,5 @@ laskutusrekisteri*.xlsx
 build/
 dist/
 database/
+npm-debug.log
+src/**/*.js
