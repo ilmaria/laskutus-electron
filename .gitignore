@@ -3,7 +3,7 @@ node_modules/
 laskut/
 bower_components/
 laskutusrekisteri*.xlsx
-build/
+./build/
 dist/
 database/
 npm-debug.log
