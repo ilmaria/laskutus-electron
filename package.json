@@ -19,6 +19,8 @@
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
+    "@types/accounting": "^0.3.31",
+    "@types/blob-stream": "^0.1.29",
     "@types/electron": "^1.4.30",
     "@types/node": "^6.0.56",
     "@types/pdfkit": "^0.7.32",

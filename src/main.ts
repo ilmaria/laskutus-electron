@@ -11,7 +11,7 @@ if (DEV_ENV) {
   var chokidar = require('chokidar')
 }
 
-let mainWindow
+let mainWindow: Electron.BrowserWindow
 
 //-----------------------------------------------
 // Main function
@@ -59,7 +59,7 @@ ipcMain.on('invoice-preview', (event, client, invoiceData) => {
 })
 
 ipcMain.on('invoice-save', (event, clients, invoiceData, opts) => {
-  invoice.saveInvoicePdf(clients, invoiceData, opts,
+  invoice.savePdf(clients, invoiceData, opts,
     path.join(__dirname, config.get('invoiceSavePath')))
 })
 
@@ -132,7 +132,7 @@ function initAutoUpdates() {
   autoUpdater.addListener('update-not-available', () => {
     log('update-not-available')
   })
-  autoUpdater.addListener('error', (err) => {
+  autoUpdater.addListener('error', (err: Error) => {
     log(err)
   })
 
@@ -142,6 +142,6 @@ function initAutoUpdates() {
   })
 }
 
-function log(msg) {
+function log(msg: any) {
   mainWindow.webContents.executeJavaScript(`console.log(\`${msg}\`)`)
 }

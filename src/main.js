@@ -45,7 +45,7 @@ electron_1.ipcMain.on('invoice-preview', (event, client, invoiceData) => {
     });
 });
 electron_1.ipcMain.on('invoice-save', (event, clients, invoiceData, opts) => {
-    invoice.saveInvoicePdf(clients, invoiceData, opts, path.join(__dirname, config_1.default.get('invoiceSavePath')));
+    invoice.savePdf(clients, invoiceData, opts, path.join(__dirname, config_1.default.get('invoiceSavePath')));
 });
 //-----------------------------------------------
 // Watch file changes

@@ -1,9 +1,9 @@
 import { remote, ipcRenderer } from 'electron'
 import * as fs from 'fs'
 import * as xlxs from 'xlsx'
-{
-const config = remote.require('./config').default
-const invoice = remote.require('./invoice')
+import * as invoice from '../invoice'
+import config from '../config'
+import { VaadinGrid } from '../types/vaadin'
 
 Polymer({
   is: 'x-client-register',
@@ -32,7 +32,7 @@ Polymer({
   ],
 
   ready() {
-    const grid = this.$['register-grid']
+    const grid: VaadinGrid = this.$['register-grid']
     const registerFile = config.get('registerFile')
 
     /**
@@ -54,8 +54,8 @@ Polymer({
      * Button listener for submitting a selected client register file.
      * Parses the file and adds its content to the Vaadin grid.
      */
-    this.$['select-register-btn'].addEventListener('change', (event) => {
-      const file = event.target.files[0]
+    this.$['select-register-btn'].addEventListener('change', (event: Event) => {
+      const file = (event.target as HTMLInputElement).files[0]
       if (file) {
         const register = importRegister(file.path)
         renderToGrid(grid, register)
@@ -91,7 +91,7 @@ Polymer({
     this.$['save-all-btn'].addEventListener('click', () => {
       const allClients = grid.items || []
 
-      let opts = {
+      let opts: invoice.Opts = {
         excludeCol: {}
       }
 
@@ -114,29 +114,28 @@ Polymer({
 
   /**
    * Get data that will be same for all created invoices.
-   * @return {Object}
    */
-  getInvoiceData() {
+  getInvoiceData(): invoice.Data {
     const {
       laskunumero,  maksuehto, viivästyskorko
     } = config.get('invoiceSettings')
 
     return {
-      päiväys: new Date(Date.now()).toLocaleDateString(),
+      päiväys: new Date().toLocaleDateString(),
       laskunumero,
       maksuehto,
       viivästyskorko,
       viesti: '',
-      products: this.getProductList()
+      products: this.getProductList(),
+      eräpäivä: ''
     }
   },
 
   /**
    * Add all selected products to the product list.
-   * @return {Object[]} - Return a list of product objects.
    */
-  getProductList() {
-    let productList = []
+  getProductList(): Array<invoice.Product> {
+    let productList: Array<invoice.Product> = []
 
     if (this.$['perusvastike'].checked) {
       const product = {
@@ -176,12 +175,9 @@ Polymer({
 
   /**
    * Save changed settings to config.
-   * @param {Object} change
-   * @param {string} change.path - Object path of the changed property.
-   * @param {string} change.value - Value the changed property.
    */
-  invoiceSettingsChanged({path, value}) {
-    const pathTable = {
+  invoiceSettingsChanged({path, value}: {path: string, value: any}) {
+    const pathTable: any = {
       '#0': 'laskunumero',
       '#1': 'maksuehto',
       '#2': 'viivästyskorko'
@@ -202,9 +198,8 @@ Polymer({
  * Get all selected clients in the table `grid`. This function
  * assumes that the Vaadin grid `items` property is an array and not a function.
  * @param {Object} grid - Vaadin grid object.
- * @return {Object[]} Return list of client objects
  */
-function getSelectedClients(grid) {
+function getSelectedClients(grid: VaadinGrid): Array<invoice.Client> {
   // indices of selected items
   const selected = grid.selection.selected()
 
@@ -214,9 +209,8 @@ function getSelectedClients(grid) {
 /**
  * Read excel file and save it into memory.
  * @param {string} register - Path to the register file.
- * @return {Object} Return js-xlsx worksheet.
  */
-function importRegister(register) {
+function importRegister(register: string) {
   const workbook = xlxs.readFile(register)
   const firstSheet = workbook.SheetNames[0]
   const worksheet = workbook.Sheets[firstSheet]
@@ -230,8 +224,8 @@ function importRegister(register) {
  * @param {Object} worksheet - Js-xlsx worksheet that contains the
  * client register.
  */
-function renderToGrid(grid, worksheet) {
-  const range = xlxs.utils.decode_range(worksheet['!ref'])
+function renderToGrid(grid: VaadinGrid, worksheet: xlxs.IWorkSheet) {
+  const range = xlxs.utils.decode_range(worksheet['!ref'] as any)
   const register = xlxs.utils.sheet_to_json(worksheet)
   let columns = []
 
@@ -250,6 +244,4 @@ function renderToGrid(grid, worksheet) {
 
   grid.columns = columns
   grid.items = register
-}
-
 }

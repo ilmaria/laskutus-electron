@@ -1,10 +1,11 @@
-const { ipcRenderer } = require('electron');
+"use strict";
+const electron_1 = require("electron");
 Polymer({
     is: 'x-update-notification',
     closeWindow() {
-        ipcRenderer.send('close-notification-window');
+        electron_1.ipcRenderer.send('close-notification-window');
     },
     quitAndUpdate() {
-        ipcRenderer.send('quit-and-update');
+        electron_1.ipcRenderer.send('quit-and-update');
     }
 });

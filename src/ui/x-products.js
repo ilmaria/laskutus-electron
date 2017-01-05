@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -6,21 +7,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments)).next());
     });
 };
-{
-    const { remote } = require('electron');
-    const db = remote.require('./database');
-    Polymer({
-        is: 'x-products',
-        ready() {
-            return __awaiter(this, void 0, void 0, function* () {
-                const productList = this.$['product-list'];
-                const products = yield db.all();
-                productList.columns = [
-                    { name: '_id' },
-                    { name: 'hinta' }
-                ];
-                productList.items = products;
-            });
-        }
-    });
-}
+const db = require("../database");
+Polymer({
+    is: 'x-products',
+    ready() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const productList = this.$['product-list'];
+            const products = yield db.all();
+            productList.columns = [
+                { name: '_id' },
+                { name: 'hinta' }
+            ];
+            productList.items = products;
+        });
+    }
+});

@@ -1,4 +1,4 @@
-import * as Config from 'electron-config'
+import Config = require('electron-config')
 import { ipcMain } from 'electron'
 
 const config = new Config({ defaults: {
@@ -30,55 +30,7 @@ const config = new Config({ defaults: {
 
   // Where to save invoices. Relative to `main.js` file.
   invoiceSavePath: '../laskut'
-}}) as Config
+}})
 
 export default config
 
-
-interface Config {
-  /**
-   * Set an item.
-   */
-  set(key: string, value: any)
-
-  /**
-   * Set multiple items at once.
-   */
-  set(object: Object)
-
-  /**
-   * Get an item.
-   */
-  get(key: string)
-
-  /**
-   * Check if an item exists.
-   */
-  has(key: string)
-
-  /**
-   * Delete an item.
-   */
-  delete(key: string)
-
-  /**
-   * Delete all items.
-   */
-  clear()
-
-  /**
-   * Get the item count.
-   */
-  size: number
-
-  /**
-   * Get all the config as an object or replace the current config with an object:
-   * `conf.store = {  hello: 'world' };`
-   */
-  store: Object
-
-  /**
-   * Get the path to the config file.
-   */
-  path: string
-}

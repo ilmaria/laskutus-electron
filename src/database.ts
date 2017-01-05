@@ -4,12 +4,19 @@ const db = new PouchDB('database', {
   auto_compaction: true
 })
 
-export function all() {
-  return db.allDocs({ include_docs: true })
-    .then(result => result.rows)
-    .then(rows => rows.map(x => x.doc))
+export interface Product {
+  id: string
+  price: number
+  name: string
+  tax: number
 }
 
-export function put(item) {
+export async function all(): Promise<Array<Product>> {
+  const allDocs = await db.allDocs({ include_docs: true })
+
+  return allDocs.rows.map(x => x.doc) as any
+}
+
+export function put(item: Product) {
   return db.put(item)
 }

@@ -1,12 +1,12 @@
-{
-const { remote } = require('electron')
-const db = remote.require('./database')
+import { remote } from 'electron'
+import * as db from '../database'
+import { VaadinGrid } from '../types/vaadin'
 
 Polymer({
   is: 'x-products',
 
   async ready() {
-    const productList = this.$['product-list']
+    const productList: VaadinGrid = this.$['product-list']
     const products = await db.all()
 
     productList.columns = [
@@ -16,5 +16,3 @@ Polymer({
     productList.items = products
   }
 })
-
-}

@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as accounting from 'accounting'
 import config from './config'
+import * as db from './database'
 
 export const fieldNames = [
   'nimi',
@@ -17,28 +18,38 @@ export const fieldNames = [
   'viesti'
 ]
 
-/*
-[{
-  name: 'Käyttövastike',
-  id: 'P 848',
-  price: 210,
-  count: 1,
-  tax: 0.10
-}, {
-  name: 'Perusvastike',
-  id: 'P 548',
-  price: 110,
-  count: 1,
-  tax: 0.12
-}]
-*/
+export interface Client {
+  nimi?: string
+  lähiosoite?: string
+  postitoimipaikka?: string
+  numero?: string
+  [key: string]: any
+}
+
+export interface Data {
+  päiväys: string
+  laskunumero: string
+  eräpäivä: string
+  maksuehto: string
+  viivästyskorko: string
+  viesti: string
+  products: Array<Product>
+}
+
+export interface Product extends db.Product {
+  count: number
+}
+
+export interface Opts {
+  excludeCol?: { [key: string]: string }
+}
 
 /**
  * Create an invoice PDF in memory. Pipe it to a file stream to save it.
- * @param {Object} invoiceData
- * @return {Object} Returns PDF document object.
+ * @param {Client} client - Client info that differs between clients.
+ * @param {Data} invoiceData - Data that is shared between multiple clients.
  */
-export function createInvoicePdf(client, invoiceData) {
+export function createPdf(client: Client, invoiceData: Data) {
   const doc = new PDFDocument({autoFirstPage: false})
   doc.addPage({margin: 40})
 
@@ -143,7 +154,7 @@ export function createInvoicePdf(client, invoiceData) {
     //à-price
     doc.text(formatMoney(product.price), PRICE, productYCoord)
     //count
-    doc.text(product.count, COUNT_H, productYCoord)
+    doc.text(product.count as any, COUNT_H, productYCoord)
     //total price without tax
     doc.text(formatMoney(totalPrice), TAXLESS, productYCoord)
     //tax
@@ -231,21 +242,6 @@ export function createInvoicePdf(client, invoiceData) {
 }
 
 /**
- * Format number into euros.
- * @param {number} number
- * @return {string}
- */
-function formatMoney(number) {
-  return accounting.formatMoney(number, {
-    symbol: '€',
-    format: '%v %s',
-    decimal: ',',
-    thousand: '.',
-    precision: 2
-  })
-}
-
-/**
  * Save invoices in PDF format.
  * @param {Object[]} clients - List of client infos. This is the only data
  * that will vary between invoices.
@@ -254,9 +250,12 @@ function formatMoney(number) {
  * used for all saved invoices.
  * @param {string} dir - Directory to save invoice files.
  */
-export function saveInvoicePdf(clients, invoiceData, opts, dir) {
+export function savePdf(clients: Client[],
+                        invoiceData: Data,
+                        opts: any,
+                        dir: string) {
   try {
-    fs.accessSync(dir, fs.F_OK)
+    fs.accessSync(dir, fs.constants.F_OK)
   } catch (e) {
     fs.mkdir(dir)
   }
@@ -266,7 +265,7 @@ export function saveInvoicePdf(clients, invoiceData, opts, dir) {
 
     // if column is excluded then skip client
     if (opts.excludeCol) {
-      skip = Object.keys(opts.excludeCol).find(col => {
+      skip = !!Object.keys(opts.excludeCol).find(col => {
         return client[col] === opts.excludeCol[col]
       })
     }
@@ -276,8 +275,21 @@ export function saveInvoicePdf(clients, invoiceData, opts, dir) {
       const number = client.numero
       const file = path.join(dir, `${name}_${number}.pdf`)
 
-      createInvoicePdf(client, invoiceData)
+      createPdf(client, invoiceData)
         .pipe(fs.createWriteStream(file))
     }
   }
+}
+
+/**
+ * Format number into euros.
+ */
+function formatMoney(amount: number) {
+  return accounting.formatMoney(amount, {
+    symbol: '€',
+    format: '%v %s',
+    decimal: ',',
+    thousand: '.',
+    precision: 2
+  })
 }

@@ -16,27 +16,12 @@ exports.fieldNames = [
     'numero',
     'viesti'
 ];
-/*
-[{
-  name: 'Käyttövastike',
-  id: 'P 848',
-  price: 210,
-  count: 1,
-  tax: 0.10
-}, {
-  name: 'Perusvastike',
-  id: 'P 548',
-  price: 110,
-  count: 1,
-  tax: 0.12
-}]
-*/
 /**
  * Create an invoice PDF in memory. Pipe it to a file stream to save it.
- * @param {Object} invoiceData
- * @return {Object} Returns PDF document object.
+ * @param {Client} client - Client info that differs between clients.
+ * @param {Data} invoiceData - Data that is shared between multiple clients.
  */
-function createInvoicePdf(client, invoiceData) {
+function createPdf(client, invoiceData) {
     const doc = new PDFDocument({ autoFirstPage: false });
     doc.addPage({ margin: 40 });
     const JSG = config_1.default.get('JSG');
@@ -184,21 +169,7 @@ function createInvoicePdf(client, invoiceData) {
     doc.end();
     return doc;
 }
-exports.createInvoicePdf = createInvoicePdf;
-/**
- * Format number into euros.
- * @param {number} number
- * @return {string}
- */
-function formatMoney(number) {
-    return accounting.formatMoney(number, {
-        symbol: '€',
-        format: '%v %s',
-        decimal: ',',
-        thousand: '.',
-        precision: 2
-    });
-}
+exports.createPdf = createPdf;
 /**
  * Save invoices in PDF format.
  * @param {Object[]} clients - List of client infos. This is the only data
@@ -208,9 +179,9 @@ function formatMoney(number) {
  * used for all saved invoices.
  * @param {string} dir - Directory to save invoice files.
  */
-function saveInvoicePdf(clients, invoiceData, opts, dir) {
+function savePdf(clients, invoiceData, opts, dir) {
     try {
-        fs.accessSync(dir, fs.F_OK);
+        fs.accessSync(dir, fs.constants.F_OK);
     }
     catch (e) {
         fs.mkdir(dir);
@@ -219,7 +190,7 @@ function saveInvoicePdf(clients, invoiceData, opts, dir) {
         let skip = false;
         // if column is excluded then skip client
         if (opts.excludeCol) {
-            skip = Object.keys(opts.excludeCol).find(col => {
+            skip = !!Object.keys(opts.excludeCol).find(col => {
                 return client[col] === opts.excludeCol[col];
             });
         }
@@ -227,9 +198,21 @@ function saveInvoicePdf(clients, invoiceData, opts, dir) {
             const name = client.nimi.replace(/[ _\\\/]/g, '_') || 'nimetön';
             const number = client.numero;
             const file = path.join(dir, `${name}_${number}.pdf`);
-            createInvoicePdf(client, invoiceData)
+            createPdf(client, invoiceData)
                 .pipe(fs.createWriteStream(file));
         }
     }
 }
-exports.saveInvoicePdf = saveInvoicePdf;
+exports.savePdf = savePdf;
+/**
+ * Format number into euros.
+ */
+function formatMoney(amount) {
+    return accounting.formatMoney(amount, {
+        symbol: '€',
+        format: '%v %s',
+        decimal: ',',
+        thousand: '.',
+        precision: 2
+    });
+}

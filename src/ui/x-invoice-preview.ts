@@ -1,16 +1,14 @@
-(function () {
-  const { ipcRenderer } = require('electron')
-  const invoice = require('../invoice')
-  const BlobStream = require('blob-stream')
+import { ipcRenderer } from 'electron'
+import * as invoice from '../invoice'
+import * as BlobStream from 'blob-stream'
 
-  ipcRenderer.send('invoice-preview-ready')
+ipcRenderer.send('invoice-preview-ready')
 
-  ipcRenderer.on('invoice-data', (event, client, invoiceData) => {
-    invoice.createInvoicePdf(client, invoiceData)
-      .pipe(new BlobStream)
-      .on('finish', function () {
-        const previewFrame = document.body.querySelector('#preview-frame') as HTMLIFrameElement
-        previewFrame.src = `../../pdfjs/web/viewer.html?file=${this.toBlobURL()}`
-      })
-  })
-})()
+ipcRenderer.on('invoice-data', (event, client, invoiceData) => {
+  invoice.createPdf(client, invoiceData)
+    .pipe(BlobStream())
+    .on('finish', function () {
+      const previewFrame = document.body.querySelector('#preview-frame') as HTMLIFrameElement
+      previewFrame.src = `../../pdfjs/web/viewer.html?file=${this.toBlobURL()}`
+    })
+})

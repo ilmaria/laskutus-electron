@@ -3,7 +3,8 @@
     "module": "commonjs",
     "target": "es2015",
     "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "noImplicitAny": true
   },
   "compileOnSave": true,
   "exclude": [
