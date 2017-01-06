@@ -1,0 +1,41 @@
+<link rel="import" href="css/basscss.html">
+<link rel="import" href="css/citric-flames.html">
+
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+
+<link rel="import" href="product-editor.html">
+
+<dom-module is="product-page">
+  <template>
+    <style is="custom-style" include="basscss citric-flames"></style>
+    <style>
+      :host {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px;
+        margin-top: 10px;
+      }
+      .left-side, .right-side {
+        width: 49%;
+        display: inline-block;
+      }
+    </style>
+
+    <div class="left-side">
+      <product-editor></product-editor>
+    </div>
+
+    <div class="right-side">
+      <div>
+        Tällä välilehdellä ovat kaikki tuotteet, joita voi valita laskuihin mukaan.
+        Uusia tuotteita voi lisätä painamalla "Lisää tuote".
+      </div>
+
+      <!-- Product list -->
+      <vaadin-grid id="product-list"></vaadin-grid>
+    </div>
+
+  </template>
+
+  <script src="product-page.js"></script>
+</dom-module>

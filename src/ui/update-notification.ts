@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron'
 
 Polymer({
-  is: 'x-update-notification',
+  is: 'update-notification',
 
   closeWindow() {
     ipcRenderer.send('close-notification-window')

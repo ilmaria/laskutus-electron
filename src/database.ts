@@ -5,7 +5,8 @@ const db = new PouchDB('database', {
 })
 
 export interface Product {
-  id: string
+  id?: string
+  _id?: string
   price: number
   name: string
   tax: number

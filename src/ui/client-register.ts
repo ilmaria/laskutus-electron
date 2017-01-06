@@ -6,7 +6,7 @@ import config from '../config'
 import { VaadinGrid } from '../types/vaadin'
 
 Polymer({
-  is: 'x-client-register',
+  is: 'client-register',
 
   properties: {
     invoiceSettings: {

@@ -34,9 +34,9 @@
     <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
     <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 
-    <link rel="import" href="x-client-register.html">
-    <link rel="import" href="x-products.html">
-    <link rel="import" href="x-archive.html">
+    <link rel="import" href="client-register.html">
+    <link rel="import" href="product-page.html">
+    <link rel="import" href="archive-page.html">
 
     <!--custom styles-->
     <link rel="import" href="css/main-styles.html">
@@ -80,9 +80,9 @@
         <!--page content-->
         <main>
           <iron-pages selected="[[route.path]]" attr-for-selected="data-path">
-            <x-client-register data-path="client-register"></x-client-register>
-            <x-products data-path="invoices"></x-products>
-            <x-archive data-path="archive"></x-archive>
+            <client-register data-path="client-register"></client-register>
+            <product-page data-path="invoices"></product-page>
+            <archive-page data-path="archive"></archive-page>
           </iron-pages>
         </main>
 

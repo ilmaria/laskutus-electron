@@ -1,0 +1,31 @@
+<link rel="import" href="css/basscss.html">
+<link rel="import" href="css/citric-flames.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module is="product-editor">
+  <template>
+    <style is="custom-style" include="basscss citric-flames"></style>
+    <style>
+      paper-card {
+        width: 100%;
+      }
+    </style>
+
+    <paper-card heading="Card Title">
+      <div class="card-content">
+        <paper-input label="Nimi"></paper-input>
+        <paper-input label="Tunnus"></paper-input>
+        <paper-input label="Hinta"></paper-input>
+        <paper-input label="Alv"></paper-input>
+      </div>
+      <div class="card-actions">
+        <paper-button>Some action</paper-button>
+      </div>
+    </paper-card>
+
+  </template>
+
+  <script src="product-editor.js"></script>
+</dom-module>

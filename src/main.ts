@@ -50,7 +50,7 @@ ipcMain.on('invoice-preview', (event, client, invoiceData) => {
     {parent: mainWindow, width: 800, height: 1000})
 
   previewWindow.loadURL(
-    `file://${__dirname}/ui/x-invoice-preview.html`)
+    `file://${__dirname}/ui/invoice-preview.html`)
 
   //previewWindow.webContents.openDevTools()
   ipcMain.once('invoice-preview-ready', (event) => {
@@ -112,7 +112,7 @@ function initAutoUpdates() {
       {parent: mainWindow, width: 400, height: 600, modal: true})
 
     notificationWindow.loadURL(
-      `file://${__dirname}/ui/x-update-notification.html`)
+      `file://${__dirname}/ui/update-notification.html`)
 
     ipcMain.once('close-notification-window', () => {
       notificationWindow.close()
