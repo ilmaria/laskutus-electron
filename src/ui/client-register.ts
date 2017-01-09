@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import * as xlxs from 'xlsx'
 import * as invoice from '../invoice'
 import config from '../config'
+import * as db from '../database'
 import { VaadinGrid } from '../types/vaadin'
 
 Polymer({
@@ -43,7 +44,9 @@ Polymer({
     fs.access(registerFile, fs.constants.F_OK, (err) => {
       if (!err) {
         const register = importRegister(registerFile)
+        saveRegister(register)
         renderToGrid(grid, register)
+
         this.$['view'].select('register-view')
       } else {
         this.$['view'].select('register-selection')
@@ -193,6 +196,41 @@ Polymer({
   }
 }) // end Polymer()
 
+
+/**
+ * Save all clients from the register to the database.
+ * @param {Object} register - Register worksheet to save to database.
+ */
+function saveRegister(worksheet: xlxs.IWorkSheet) {
+  const register: any[] = xlxs.utils.sheet_to_json(worksheet)
+
+  register.sort((a, b) => {
+    if (a.nimi < b.nimi) return -1
+    if (a.nimi > b.nimi) return 1
+    return 0
+  })
+
+  let clients: db.Client[] = []
+  let clientName = ''
+
+  for (const client of register) {
+    if (client.nimi === clientName) {
+      // Add listed share number to clients shares
+      clients[clients.length-1].shares.push(client.numero)
+    } else {
+      clientName = client.nimi
+      clients.push({
+        name: client.nimi,
+        address: client.kähisoite,
+        postOffice: client.postitoimipaikka,
+        shares: [client.numero],
+        type: 'clients'
+      })
+    }
+  }
+
+  db.put(clients)
+}
 
 /**
  * Get all selected clients in the table `grid`. This function

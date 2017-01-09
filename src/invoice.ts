@@ -33,7 +33,7 @@ export interface Data {
   maksuehto: string
   viivästyskorko: string
   viesti: string
-  products: Array<Product>
+  products: Product[]
 }
 
 export interface Product extends db.Product {

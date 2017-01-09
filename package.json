@@ -14,6 +14,7 @@
     "electron-auto-updater": "^0.10.1",
     "electron-config": "^0.2.1",
     "jszip": "^3.0.0",
+    "node-persist": "^2.0.7",
     "pdfkit": "^0.7.2",
     "pouchdb": "^6.1.0",
     "xlsx": "^0.8.0"
@@ -23,6 +24,7 @@
     "@types/blob-stream": "^0.1.29",
     "@types/electron": "^1.4.30",
     "@types/node": "^6.0.56",
+    "@types/node-persist": "0.0.31",
     "@types/pdfkit": "^0.7.32",
     "@types/polymer": "^1.1.29",
     "@types/pouchdb": "^5.4.28",
@@ -41,6 +43,10 @@
   },
   "build": {
     "appId": "com.squirrel.laskutus-electron.laskutus-electron",
-    "publish": [{"provider": "github"}]
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ]
   }
 }

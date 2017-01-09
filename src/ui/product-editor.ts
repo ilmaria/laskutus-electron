@@ -27,10 +27,12 @@ Polymer({
     }
 
     return db.put({
-      name: name.value,
       _id: id.value,
+      name: name.value,
       price: price.value,
-      tax: tax.value
+      tax: tax.value,
+      perShare: false,
+      type: 'products'
     })
   }
 })
