@@ -7,7 +7,6 @@ export interface Product {
   name: string
   price: number
   tax: number
-  perShare: boolean
   type: 'products'
 }
 
@@ -15,7 +14,7 @@ export interface Client {
   name: string
   address: string
   postOffice: string
-  shares: number[]
+  shares: string[]
   type: 'clients'
 }
 
@@ -36,7 +35,20 @@ export function all(type: DbItem['type']): DbItem[] {
   return result
 }
 
-export function put(items: DbItem[]) {
+export function put(item: DbItem) {
+  let key: string
+
+  if (item.type === 'products') {
+    key = item._id
+  } else {
+    key = item.name
+  }
+
+  storage.setItem(key, item)
+  storage.persistKey(key)
+}
+
+export function putAll(items: DbItem[]) {
   for (const item of items) {
     let key: string
 

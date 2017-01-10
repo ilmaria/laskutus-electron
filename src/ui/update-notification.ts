@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron'
 
-Polymer({
+export default {
   is: 'update-notification',
 
   closeWindow() {
@@ -10,4 +10,4 @@ Polymer({
   quitAndUpdate() {
     ipcRenderer.send('quit-and-update')
   }
-})
+} as polymer.Base

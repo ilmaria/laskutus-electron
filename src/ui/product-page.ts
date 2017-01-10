@@ -3,7 +3,7 @@ import * as db from '../database'
 import { Product, Client } from '../database'
 import { VaadinGrid } from '../types/vaadin'
 
-Polymer({
+export default {
   is: 'product-page',
 
   async ready() {
@@ -16,4 +16,4 @@ Polymer({
     ]
     productList.items = products
   }
-})
+} as polymer.Base

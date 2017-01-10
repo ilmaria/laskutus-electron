@@ -6,31 +6,31 @@ import config from '../config'
 import * as db from '../database'
 import { VaadinGrid } from '../types/vaadin'
 
-Polymer({
+interface ExcelClient {
+  nimi: string
+  lähiosoite: string
+  postitoimipaikka: string
+  numero: string
+  rahoitusvastike: string
+}
+
+const invoiceSettings = config.get('invoiceSettings')
+
+export default {
   is: 'client-register',
 
   properties: {
-    invoiceSettings: {
-      type: Array,
-      value: () => {
-        const settings = config.get('invoiceSettings')
-        return [
-          { label: 'Laskunumeron etuliite',
-            value: settings.laskunumero
-          },
-          { label: 'Maksuehto',
-            value: settings.maksuehto
-          },
-          { label: 'Viivästyskorko',
-            value: settings.viivästyskorko
-          }]
-      }
+    paymentTerms: {
+      type: String,
+      value: invoiceSettings.paymentTerms,
+      readOnly: true
+    },
+    penaltyInterest: {
+      type: String,
+      value: invoiceSettings.penaltyInterest,
+      readOnly: true
     }
   },
-
-  observers: [
-    'invoiceSettingsChanged(invoiceSettings.*)'
-  ],
 
   ready() {
     const grid: VaadinGrid = this.$['register-grid']
@@ -44,8 +44,10 @@ Polymer({
     fs.access(registerFile, fs.constants.F_OK, (err) => {
       if (!err) {
         const register = importRegister(registerFile)
-        saveRegister(register)
-        renderToGrid(grid, register)
+        const clients = parseRegister(register)
+
+        db.putAll(clients)
+        renderGrid(grid, clients)
 
         this.$['view'].select('register-view')
       } else {
@@ -53,6 +55,13 @@ Polymer({
       }
     })
 
+    this.initEventListeners(grid)
+  },
+
+  /**
+   * Initialize event listeners for buttons in html and for grid change events.
+   */
+  initEventListeners(grid: VaadinGrid) {
     /**
      * Button listener for submitting a selected client register file.
      * Parses the file and adds its content to the Vaadin grid.
@@ -61,8 +70,14 @@ Polymer({
       const file = (event.target as HTMLInputElement).files[0]
       if (file) {
         const register = importRegister(file.path)
-        renderToGrid(grid, register)
+        const clients = parseRegister(register)
+
+        db.putAll(clients)
+        renderGrid(grid, clients)
+
         config.set('registerFile', file.path)
+
+        this.$['view'].select('register-view')
       }
     })
 
@@ -94,15 +109,11 @@ Polymer({
     this.$['save-all-btn'].addEventListener('click', () => {
       const allClients = grid.items || []
 
-      let opts: invoice.Opts = {
-        excludeCol: {}
-      }
-
       if (this.$['exclude-rahoitusvastike-ok'].checked) {
-        opts.excludeCol['rahoitusvastike'] = 'OK'
+        //opts.excludeCol['rahoitusvastike'] = 'OK'
       }
 
-      ipcRenderer.send('invoice-save', allClients, this.getInvoiceData(), opts)
+      ipcRenderer.send('invoice-save', allClients, this.getInvoiceData())
     })
 
     /**
@@ -119,90 +130,32 @@ Polymer({
    * Get data that will be same for all created invoices.
    */
   getInvoiceData(): invoice.Data {
-    const {
-      laskunumero,  maksuehto, viivästyskorko
-    } = config.get('invoiceSettings')
-
     return {
-      päiväys: new Date().toLocaleDateString(),
-      laskunumero,
-      maksuehto,
-      viivästyskorko,
-      viesti: '',
+      date: new Date().toLocaleDateString(),
+      paymentTerms: this.$['payment-terms'].value,
+      penaltyInterest: this.$['penalty-interest'].value,
+      notes: '',
       products: this.getProductList(),
-      eräpäivä: ''
+      dueDate: ''
     }
   },
 
   /**
    * Add all selected products to the product list.
    */
-  getProductList(): Array<invoice.Product> {
-    let productList: Array<invoice.Product> = []
-
-    if (this.$['perusvastike'].checked) {
-      const product = {
-        name: 'Perusvastike',
-        id: 'P 528',
-        price: 110,
-        count: 1,
-        tax: 0.12
-      }
-      productList.push(product)
-    }
-
-    if (this.$['käyttövastike'].checked) {
-      const product = {
-        name: 'Käyttövastike',
-        id: 'P 448',
-        price: 210,
-        count: 1,
-        tax: 0.11
-      }
-      productList.push(product)
-    }
-
-    if (this.$['rahoitusvastike'].checked) {
-      const product = {
-        name: 'Rahoitusvastike',
-        id: 'P 548',
-        price: 110,
-        count: 1,
-        tax: 0.10
-      }
-      productList.push(product)
-    }
-
-    return productList
+  getProductList(): Array<db.Product> {
+    return []
   },
 
-  /**
-   * Save changed settings to config.
-   */
-  invoiceSettingsChanged({path, value}: {path: string, value: any}) {
-    const pathTable: any = {
-      '#0': 'laskunumero',
-      '#1': 'maksuehto',
-      '#2': 'viivästyskorko'
-    }
-
-    // Save settings only every 100 ms
-    this.debounce('invoiceSettingsChanged', () => {
-      // Match with pattern like `#1`.
-      const match = path.match(/#\d+/)
-      const key = match ? match[0] : null
-      config.set(`invoiceSettings.${pathTable[key]}`, value)
-    }, 100)
-  }
-}) // end Polymer()
+} as polymer.Base
 
 
 /**
  * Save all clients from the register to the database.
  * @param {Object} register - Register worksheet to save to database.
  */
-function saveRegister(worksheet: xlxs.IWorkSheet) {
-  const register: any[] = xlxs.utils.sheet_to_json(worksheet)
+function parseRegister(worksheet: xlxs.IWorkSheet): db.Client[] {
+  const register: ExcelClient[] = xlxs.utils.sheet_to_json(worksheet) as any
 
   register.sort((a, b) => {
     if (a.nimi < b.nimi) return -1
@@ -221,7 +174,7 @@ function saveRegister(worksheet: xlxs.IWorkSheet) {
       clientName = client.nimi
       clients.push({
         name: client.nimi,
-        address: client.kähisoite,
+        address: client.lähiosoite,
         postOffice: client.postitoimipaikka,
         shares: [client.numero],
         type: 'clients'
@@ -229,7 +182,7 @@ function saveRegister(worksheet: xlxs.IWorkSheet) {
     }
   }
 
-  db.put(clients)
+  return clients
 }
 
 /**
@@ -237,7 +190,7 @@ function saveRegister(worksheet: xlxs.IWorkSheet) {
  * assumes that the Vaadin grid `items` property is an array and not a function.
  * @param {Object} grid - Vaadin grid object.
  */
-function getSelectedClients(grid: VaadinGrid): Array<invoice.Client> {
+function getSelectedClients(grid: VaadinGrid): Array<db.Client> {
   // indices of selected items
   const selected = grid.selection.selected()
 
@@ -259,27 +212,16 @@ function importRegister(register: string) {
  * Transform js-xlsx data to be compatible with vaadin-grid and
  * bind the data to an existing grid.
  * @param {Object} grid - Vaadin grid to bind the worksheet data.
- * @param {Object} worksheet - Js-xlsx worksheet that contains the
- * client register.
+ * @param {Object} clients - Clients to populate the grid.
  */
-function renderToGrid(grid: VaadinGrid, worksheet: xlxs.IWorkSheet) {
-  const range = xlxs.utils.decode_range(worksheet['!ref'] as any)
-  const register = xlxs.utils.sheet_to_json(worksheet)
-  let columns = []
-
-  const startIdx = range.s.c
-  const endIdx = range.e.c
-  const headerRow = range.s.r
-  //Loop first row and add cell values as table columns
-  for (let i = startIdx; i < endIdx; i++) {
-    const cellAddress = xlxs.utils.encode_cell({c: i, r: headerRow})
-    const cell = worksheet[cellAddress]
-
-    if (cell) {
-      columns.push({name: cell.v})
-    }
-  }
+function renderGrid(grid: VaadinGrid, clients: db.Client[]) {
+  const columns = [
+    { name: 'name',       content: 'Nimi' },
+    { name: 'address',    content: 'Osoite' },
+    { name: 'postOffice', content: 'Postitoimipaikka' },
+    { name: 'shares',     content: 'Osakkeet' },
+  ]
 
   grid.columns = columns
-  grid.items = register
+  grid.items = clients
 }

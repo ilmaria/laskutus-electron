@@ -20,45 +20,24 @@
       }
     </script>
 
-    <!--html import-->
-    <link rel="import" href="../../bower_components/polymer/polymer.html">
+    <!-- Import all elements -->
+    <link rel="import" href="app.html">
 
-    <link rel="import" href="../../bower_components/app-layout/app-layout.html">
-
-    <link rel="import" href="../../bower_components/app-route/app-route.html">
-    <link rel="import" href="../../bower_components/app-route/app-location.html">
-
-    <link rel="import" href="../../bower_components/paper-item/paper-item.html">
-
-    <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
-    <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-    <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
-
-    <link rel="import" href="client-register.html">
-    <link rel="import" href="product-page.html">
-    <link rel="import" href="archive-page.html">
-
-    <!--custom styles-->
-    <link rel="import" href="css/main-styles.html">
-    <link rel="import" href="css/basscss.html">
-    <link rel="import" href="css/citric-flames.html">
     <style is="custom-style"
-      include="main-styles basscss citric-flames iron-flex">
-    </style>
-
+        include="main-styles basscss citric-flames iron-flex">
+      </style>
   </head>
 
   <body fullbleed>
     <template is="dom-bind">
-
-      <!--routing-->
+      <!-- Routing -->
       <app-location route="{{route}}" use-hash-as-path></app-location>
       <app-route route="{{route}}"></app-route>
 
-      <!--app layout-->
+      <!-- App layout -->
       <app-drawer-layout>
 
-        <!--nav menu-->
+        <!-- Nav menu -->
         <app-drawer opened>
           <nav>
             <iron-selector
@@ -77,7 +56,7 @@
           </nav>
         </app-drawer>
 
-        <!--page content-->
+        <!-- Page content -->
         <main>
           <iron-pages selected="[[route.path]]" attr-for-selected="data-path">
             <client-register data-path="client-register"></client-register>

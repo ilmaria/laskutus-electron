@@ -2,7 +2,7 @@ import { remote } from 'electron'
 import * as db from '../database'
 import { VaadinGrid } from '../types/vaadin'
 
-Polymer({
+export default {
   is: 'product-editor',
 
   ready() {
@@ -31,8 +31,7 @@ Polymer({
       name: name.value,
       price: price.value,
       tax: tax.value,
-      perShare: false,
       type: 'products'
     })
   }
-})
+} as polymer.Base

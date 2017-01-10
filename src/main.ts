@@ -59,7 +59,7 @@ ipcMain.on('invoice-preview', (event, client, invoiceData) => {
 })
 
 ipcMain.on('invoice-save', (event, clients, invoiceData, opts) => {
-  invoice.savePdf(clients, invoiceData, opts,
+  invoice.savePdf(clients, invoiceData,
     path.join(__dirname, config.get('invoiceSavePath')))
 })
 

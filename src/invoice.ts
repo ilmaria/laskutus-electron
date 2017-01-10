@@ -4,7 +4,9 @@ import * as path from 'path'
 import * as accounting from 'accounting'
 import config from './config'
 import * as db from './database'
+import { Client, Product } from './database'
 
+/*
 export const fieldNames = [
   'nimi',
   'lähiosoite',
@@ -16,33 +18,21 @@ export const fieldNames = [
   'viivästyskorko',
   'numero',
   'viesti'
-]
-
-export interface Client {
-  nimi?: string
-  lähiosoite?: string
-  postitoimipaikka?: string
-  numero?: string
-  [key: string]: any
-}
+]*/
 
 export interface Data {
-  päiväys: string
-  laskunumero: string
-  eräpäivä: string
-  maksuehto: string
-  viivästyskorko: string
-  viesti: string
-  products: Product[]
+  date: string
+  dueDate: string
+  paymentTerms: string
+  penaltyInterest: string
+  notes: string
+  products: {
+    product: Product
+    count: number
+    perShare: boolean
+  }[]
 }
 
-export interface Product extends db.Product {
-  count: number
-}
-
-export interface Opts {
-  excludeCol?: { [key: string]: string }
-}
 
 /**
  * Create an invoice PDF in memory. Pipe it to a file stream to save it.
@@ -62,14 +52,15 @@ export function createPdf(client: Client, invoiceData: Data) {
   const BIG_FONT = 16
 
   const {
-    nimi, lähiosoite, postitoimipaikka, numero
+    name, address, postOffice, shares
   } = client
 
   const {
-    päiväys, laskunumero, eräpäivä,
-    maksuehto, viivästyskorko,
-    viesti, products
+    date, dueDate, paymentTerms,
+    penaltyInterest, notes, products
   } = invoiceData
+
+  const invoiceNumber = '123644'
 
   //-----------------------------------------------
   //TOP INFO
@@ -79,9 +70,9 @@ export function createPdf(client: Client, invoiceData: Data) {
 
   // Recipient name and address
   doc.text([
-    nimi,
-    lähiosoite,
-    postitoimipaikka
+    name,
+    address,
+    postOffice
   ].join('\n'))
 
   // Invoice small details
@@ -98,13 +89,13 @@ export function createPdf(client: Client, invoiceData: Data) {
   ].join('\n'), 315, MARGIN_TOP)
 
   doc.text([
-    päiväys,
+    date,
     '',
-    laskunumero,
-    eräpäivä,
+    invoiceNumber,
+    dueDate,
     JSG.tel,
-    maksuehto,
-    viivästyskorko
+    paymentTerms,
+    penaltyInterest
   ].join('\n'), 315, MARGIN_TOP, {
     align: 'right'
   })
@@ -144,17 +135,19 @@ export function createPdf(client: Client, invoiceData: Data) {
   //-----------------------------------------------
   const START_Y_COORD = HEADER_DASH + 7
   let productYCoord
-  for (let i = 0; i < products.length; i++) {
-    const product = products[i]
-    const totalPrice = product.price * product.count
+  let i = 0
+  for (const productItem of products) {
+    const product = productItem.product
+    const totalPrice = product.price * productItem.count
     productYCoord = START_Y_COORD + i*25
+    i++
 
     //name
-    doc.text(`${product.name}, ${product.id}`, MARGIN_LEFT, productYCoord)
+    doc.text(`${product.name}, ${product._id}`, MARGIN_LEFT, productYCoord)
     //à-price
     doc.text(formatMoney(product.price), PRICE, productYCoord)
     //count
-    doc.text(product.count as any, COUNT_H, productYCoord)
+    doc.text(productItem.count as any, COUNT_H, productYCoord)
     //total price without tax
     doc.text(formatMoney(totalPrice), TAXLESS, productYCoord)
     //tax
@@ -164,8 +157,8 @@ export function createPdf(client: Client, invoiceData: Data) {
       productYCoord, {align: 'right'})
   }
 
-  const [totalPrice, totalTax] = products.reduce((total, product) => {
-    const price = product.price * product.count
+  const [totalPrice, totalTax] = products.reduce((total, {product, count}) => {
+    const price = product.price * count
     const tax = price * product.tax
     return [total[0] + price, total[1] + tax]
   }, [0, 0])
@@ -178,14 +171,14 @@ export function createPdf(client: Client, invoiceData: Data) {
     TOTAL, TOTAL_Y, {align: 'right'})
 
   const MESSAGE = TOTAL_Y + 70
-  doc.text(viesti, MARGIN_LEFT, MESSAGE)
+  doc.text(notes, MARGIN_LEFT, MESSAGE)
 
 
   //-----------------------------------------------
   //PAYMENT INFO
   //-----------------------------------------------
   const RECEIVER_INFO = 550
-  const viitenumero = '002' + numero
+  const viitenumero = '0020998'
 
   doc.text([
     'Saaja / Mottagare:',
@@ -205,7 +198,7 @@ export function createPdf(client: Client, invoiceData: Data) {
     JSG.name,
     JSG.IBAN,
     viitenumero,
-    eräpäivä,
+    dueDate,
     finalPrice
   ].join('\n'), RECEIVER_INFO_LEFT, RECEIVER_INFO - 2,
     {paragraphGap: 1})
@@ -243,16 +236,13 @@ export function createPdf(client: Client, invoiceData: Data) {
 
 /**
  * Save invoices in PDF format.
- * @param {Object[]} clients - List of client infos. This is the only data
+ * @param {Object[]} clients - List of clients. This is the only data
  * that will vary between invoices.
  * @param {Object} invoiceData - Invoice fields that will be same for all invoices.
- * @param {Object} opts - Other options for invoices. Same options will be
- * used for all saved invoices.
  * @param {string} dir - Directory to save invoice files.
  */
 export function savePdf(clients: Client[],
                         invoiceData: Data,
-                        opts: any,
                         dir: string) {
   try {
     fs.accessSync(dir, fs.constants.F_OK)
@@ -261,23 +251,12 @@ export function savePdf(clients: Client[],
   }
 
   for (const client of clients) {
-    let skip = false
+    const name = client.name.replace(/[ _\\\/]/g, '_') || 'nimetön'
+    const number = '123'
+    const file = path.join(dir, `${name}_${number}.pdf`)
 
-    // if column is excluded then skip client
-    if (opts.excludeCol) {
-      skip = !!Object.keys(opts.excludeCol).find(col => {
-        return client[col] === opts.excludeCol[col]
-      })
-    }
-
-    if (!skip && client.nimi) {
-      const name = client.nimi.replace(/[ _\\\/]/g, '_') || 'nimetön'
-      const number = client.numero
-      const file = path.join(dir, `${name}_${number}.pdf`)
-
-      createPdf(client, invoiceData)
-        .pipe(fs.createWriteStream(file))
-    }
+    createPdf(client, invoiceData)
+      .pipe(fs.createWriteStream(file))
   }
 }
 

@@ -1,20 +1,8 @@
-<link rel="import" href="css/basscss.html">
-<link rel="import" href="css/citric-flames.html">
-
-<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-
 <dom-module is="client-register">
   <template>
-    <style is="custom-style" include="basscss citric-flames"></style>
+    <style is="custom-style"
+      include="main-styles basscss citric-flames iron-flex">
+    </style>
     <style>
       :root {
         --primary-color: var(--default-primary-color);
@@ -94,9 +82,8 @@
 
             <!-- Invoice settings -->
             <div id="invoice-settings-tab">
-              <template is="dom-repeat" items="{{invoiceSettings}}">
-                <paper-input label="[[item.label]]" value="{{item.value}}"></paper-input>
-              </template>
+              <paper-input label="Maksuehto" value="[[paymentTerms]]"></paper-input>
+              <paper-input label="Viivästyskorko" value="[[penaltyInterest]]"></paper-input>
             </div>
 
           </iron-pages>
@@ -108,6 +95,4 @@
     </iron-pages>
 
   </template>
-
-  <script src="client-register.js"></script>
 </dom-module>

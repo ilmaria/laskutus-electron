@@ -23,9 +23,8 @@ const config = new Config({ defaults: {
   },
 
   invoiceSettings: {
-    laskunumero: '1000',
-    maksuehto: '21pv netto',
-    viivästyskorko: '7,5%'
+    paymentTerms: '21pv netto',
+    penaltyInterest: '7,5%'
   },
 
   // Where to save invoices. Relative to `main.js` file.
