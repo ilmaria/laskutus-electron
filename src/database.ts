@@ -1,24 +1,6 @@
-import * as storage from 'node-persist'
+import Storage from './json-storage'
 
-storage.initSync({continuous: false})
-
-export interface Product {
-  _id: string
-  name: string
-  price: number
-  tax: number
-  type: 'products'
-}
-
-export interface Client {
-  name: string
-  address: string
-  postOffice: string
-  shares: string[]
-  type: 'clients'
-}
-
-type DbItem = Product | Client
+const storage = new Storage()
 
 
 export function all(type: 'clients'): Client[]
@@ -45,7 +27,7 @@ export function put(item: DbItem) {
   }
 
   storage.setItem(key, item)
-  storage.persistKey(key)
+  storage.persist()
 }
 
 export function putAll(items: DbItem[]) {
@@ -61,11 +43,28 @@ export function putAll(items: DbItem[]) {
     storage.setItem(key, item)
   }
 
-  return storage.persist()
+  storage.persist()
 }
 
 export async function get<T extends DbItem>(id: string): Promise<T> {
-  return storage.getItem(id) as any
+  return storage.getItem(id)
 }
 
 
+export interface Product {
+  _id: string
+  name: string
+  price: number
+  tax: number
+  type: 'products'
+}
+
+export interface Client {
+  name: string
+  address: string
+  postOffice: string
+  shares: string[]
+  type: 'clients'
+}
+
+type DbItem = Product | Client

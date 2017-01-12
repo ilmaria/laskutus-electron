@@ -170,7 +170,7 @@ function parseRegister(worksheet: xlxs.IWorkSheet): db.Client[] {
     if (client.nimi === clientName) {
       // Add listed share number to clients shares
       clients[clients.length-1].shares.push(client.numero)
-    } else {
+    } else if (client.nimi) {
       clientName = client.nimi
       clients.push({
         name: client.nimi,
@@ -216,12 +216,19 @@ function importRegister(register: string) {
  */
 function renderGrid(grid: VaadinGrid, clients: db.Client[]) {
   const columns = [
-    { name: 'name',       content: 'Nimi' },
-    { name: 'address',    content: 'Osoite' },
-    { name: 'postOffice', content: 'Postitoimipaikka' },
-    { name: 'shares',     content: 'Osakkeet' },
+    { name: 'name',       resizable: true, sortable: true },
+    { name: 'address',    resizable: true, sortable: true },
+    { name: 'postOffice', resizable: true, sortable: true },
+    { name: 'shares',     resizable: true, sortable: true },
   ]
 
   grid.columns = columns
   grid.items = clients
+
+  grid.sortOrder = [{ column: 0, direction: 'asc' }]
+
+  grid.header.getCell(0, 0).content = 'Nimi'
+  grid.header.getCell(0, 1).content = 'Osoite'
+  grid.header.getCell(0, 2).content = 'Postitoimipaikka'
+  grid.header.getCell(0, 3).content = 'Osakkeet'
 }

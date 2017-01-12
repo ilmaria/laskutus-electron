@@ -12,7 +12,9 @@ export default {
 
     productList.columns = [
       {name: '_id'},
-      {name: 'hinta'}
+      {name: 'name'},
+      {name: 'price'},
+      {name: 'tax'}
     ]
     productList.items = products
   }
