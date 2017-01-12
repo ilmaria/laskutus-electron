@@ -1,4 +1,3 @@
-import { remote } from 'electron'
 import * as db from '../database'
 import { Product, Client } from '../database'
 import { VaadinGrid } from '../types/vaadin'

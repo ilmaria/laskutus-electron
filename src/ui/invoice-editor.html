@@ -1,0 +1,27 @@
+<dom-module is="invoice-editor">
+  <template>
+    <style is="custom-style"
+      include="main-styles citric-flames iron-flex">
+    </style>
+    <style>
+      paper-card {
+        width: 100%;
+      }
+    </style>
+
+    <paper-card heading="Tuotteen tiedot">
+      <div class="card-content">
+        <paper-input id="payment-terms" label="Maksuehto"
+          value="[[paymentTerms]]"></paper-input>
+        <paper-input id="penalty-interest" label="Viivästyskorko"
+          value="[[penaltyInterest]]"></paper-input>
+      </div>
+      <div class="card-actions">
+        <paper-button raised class="primary" on-tap="createProduct">
+          Lisää tuote
+        </paper-button>
+      </div>
+    </paper-card>
+
+  </template>
+</dom-module>

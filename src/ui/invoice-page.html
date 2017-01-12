@@ -1,7 +1,7 @@
-<dom-module is="client-register">
+<dom-module is="invoice-page">
   <template>
     <style is="custom-style"
-      include="main-styles basscss citric-flames iron-flex">
+      include="main-styles citric-flames iron-flex">
     </style>
     <style>
       :root {
@@ -20,28 +20,39 @@
       paper-input {
         -webkit-column-break-inside: avoid;
       }
+      vaadin-grid {
+        margin-bottom: 10px;
+      }
+      .separator {
+        margin: 5rem;
+      }
     </style>
 
+    <!-- Invoice editor -->
+    <invoice-editor></invoice-editor>
+
+    <div class="separator"></div>
+
+    <!-- Register grid -->
     <iron-pages id="view" attr-for-selected="id">
 
       <div id="register-selection">
-        <p class="h2">Et ole valinnut rekisteriä</p>
+        <h2>Et ole valinnut rekisteriä</h2>
         <input type="file" id="select-register-btn">Valitse rekisteri</input>
       </div>
 
       <div id="register-view">
 
-        <!-- Register grid -->
         <vaadin-grid id="register-grid" selection-mode="multi"></vaadin-grid>
 
         <paper-button id="preview-btn" raised class="primary">Esikatselu</paper-button>
         <paper-button id="save-btn" raised disabled class="primary">Tallenna</paper-button>
         <paper-button id="save-all-btn" raised class="primary">Tallenna kaikki</paper-button>
 
-        <!-- Settings -->
+        <!-- Settings -
         <section id="invoice-settings">
           <paper-toolbar>
-            <paper-tabs selected="{{selected}}" fallback-selection="0" no-slide>
+            <paper-tabs selected="{{selected-setting}}" fallback-selection="0" no-slide>
               <paper-tab>
                 <h4>Filterit</h4>
               </paper-tab>
@@ -54,9 +65,9 @@
             </paper-tabs>
           </paper-toolbar>
 
-          <iron-pages class="pr2" selected="{{selected}}">
+          <iron-pages class="pr2" selected="{{selected-setting}}">
 
-            <!-- Filters -->
+            <!- Filters -
             <div id="filters">
 
               <div id="vastike-selector">
@@ -80,7 +91,7 @@
 
             </div>
 
-            <!-- Invoice settings -->
+            <!- Invoice settings -
             <div id="invoice-settings-tab">
               <paper-input id="payment-terms" label="Maksuehto"
                 value="[[paymentTerms]]"></paper-input>
@@ -93,6 +104,7 @@
         </div>
 
         </section>
+        -->
 
     </iron-pages>
 

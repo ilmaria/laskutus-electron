@@ -26,7 +26,7 @@ function createMainWindow() {
 
   mainWindow.loadURL(`file://${__dirname}/ui/index.html`)
 
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   mainWindow.on('close', () => {
     const win = mainWindow.getBounds()
@@ -45,15 +45,15 @@ function createMainWindow() {
 //-----------------------------------------------
 // Event listeners
 //-----------------------------------------------
-ipcMain.on('invoice-preview', (event, client, invoiceData) => {
+ipcMain.on('preview-invoice', (event, client, invoiceData) => {
   const previewWindow = new BrowserWindow(
     {parent: mainWindow, width: 800, height: 1000})
 
   previewWindow.loadURL(
-    `file://${__dirname}/ui/invoice-preview.html`)
+    `file://${__dirname}/ui/preview-invoice.html`)
 
   //previewWindow.webContents.openDevTools()
-  ipcMain.once('invoice-preview-ready', (event) => {
+  ipcMain.once('preview-invoice-ready', (event) => {
     event.sender.send('invoice-data', client, invoiceData)
   })
 })

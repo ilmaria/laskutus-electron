@@ -2,7 +2,7 @@ import { ipcRenderer } from 'electron'
 import * as invoice from '../invoice'
 import * as BlobStream from 'blob-stream'
 
-ipcRenderer.send('invoice-preview-ready')
+ipcRenderer.send('preview-invoice-ready')
 
 ipcRenderer.on('invoice-data', (event, client, invoiceData) => {
   invoice.createPdf(client, invoiceData)

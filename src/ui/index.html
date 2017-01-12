@@ -12,11 +12,6 @@
       window.Polymer = {
         dom: 'shadow',
         useNativeCSSProperties: true
-      };
-
-      //default location
-      if (window.location.hash === '') {
-        window.location.href += '#client-register';
       }
     </script>
 
@@ -24,48 +19,47 @@
     <link rel="import" href="app.html">
 
     <style is="custom-style"
-        include="main-styles basscss citric-flames iron-flex">
-      </style>
+      include="main-styles citric-flames iron-flex">
+    </style>
+    <style>
+      paper-tab {
+        width: 150px;
+      }
+      main {
+        padding: 10px;
+      }
+    </style>
   </head>
 
   <body fullbleed>
     <template is="dom-bind">
-      <!-- Routing -->
-      <app-location route="{{route}}" use-hash-as-path></app-location>
-      <app-route route="{{route}}"></app-route>
 
-      <!-- App layout -->
-      <app-drawer-layout>
+      <!-- Nav menu -->
+      <nav>
+        <paper-toolbar>
+          <paper-tabs selected="{{selected-page}}" fallback-selection="0" no-slide>
+            <paper-tab>
+              <h3>Uusi lasku</h3>
+            </paper-tab>
+            <paper-tab>
+              <h3>Tuotteet</h3>
+            </paper-tab>
+            <paper-tab>
+              <h3>Arkisto</h3>
+            </paper-tab>
+          </paper-tabs>
+        </paper-toolbar>
+      </nav>
 
-        <!-- Nav menu -->
-        <app-drawer opened>
-          <nav>
-            <iron-selector
-                  class="layout vertical"
-                  selected="0">
-              <a href="#client-register">
-                <paper-item>Asiakasrekisteri</paper-item>
-              </a>
-              <a href="#invoices">
-                <paper-item>Tuotteet</paper-item>
-              </a>
-              <a href="#archive">
-                <paper-item>Arkisto</paper-item>
-              </a>
-            </iron-selector>
-          </nav>
-        </app-drawer>
+      <!-- Page content -->
+      <main>
+        <iron-pages selected="{{selected-page}}">
+          <invoice-page></invoice-page>
+          <product-page></product-page>
+          <archive-page></archive-page>
+        </iron-pages>
+      </main>
 
-        <!-- Page content -->
-        <main>
-          <iron-pages selected="[[route.path]]" attr-for-selected="data-path">
-            <client-register data-path="client-register"></client-register>
-            <product-page data-path="invoices"></product-page>
-            <archive-page data-path="archive"></archive-page>
-          </iron-pages>
-        </main>
-
-      </app-drawer-layout>
 
     </template>
   </body>

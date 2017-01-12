@@ -1,4 +1,4 @@
-import { remote, ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electron'
 import * as fs from 'fs'
 import * as xlxs from 'xlsx'
 import * as invoice from '../invoice'
@@ -17,7 +17,7 @@ interface ExcelClient {
 const invoiceSettings = config.get('invoiceSettings')
 
 export default {
-  is: 'client-register',
+  is: 'invoice-page',
 
   properties: {
     paymentTerms: {
@@ -87,7 +87,7 @@ export default {
     this.$['preview-btn'].addEventListener('click', () => {
       const clients = getSelectedClients(grid)
       if (clients.length) {
-        ipcRenderer.send('invoice-preview', clients[0], this.getInvoiceData())
+        ipcRenderer.send('preview-invoice', clients[0], this.getInvoiceData())
       }
     })
 
