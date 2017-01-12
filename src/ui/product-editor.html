@@ -13,7 +13,7 @@
       }
     </style>
 
-    <paper-card heading="Card Title">
+    <paper-card heading="Tuotteen tiedot">
       <div class="card-content">
         <paper-input label="Nimi" required auto-validate
           error-message="Nimi vaaditaan">
@@ -21,15 +21,17 @@
         <paper-input label="Tunnus" required auto-validate
           error-message="Tunnus vaaditaan">
         </paper-input>
-        <paper-input label="Hinta" type="number" placeholder="0.00">
+        <paper-input label="Hinta" type="number" value="0" placeholder="0.00">
           <div suffix>€</div>
         </paper-input>
-        <paper-input label="Alv" type="number" placeholder="0.0">
+        <paper-input label="Alv" type="number" value="0" placeholder="0.0">
           <div suffix>%</div>
         </paper-input>
       </div>
       <div class="card-actions">
-        <paper-button on-tap="validateProduct">Some action</paper-button>
+        <paper-button raised class="primary" on-tap="createProduct">
+          Lisää tuote
+        </paper-button>
       </div>
     </paper-card>
 

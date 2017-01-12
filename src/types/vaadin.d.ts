@@ -43,4 +43,6 @@ interface GridSelection {
 
 interface GridColumn {
   name: string
+  resizable?: boolean
+  sortable?: boolean
 }

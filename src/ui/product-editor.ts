@@ -9,29 +9,33 @@ export default {
 
   },
 
-  isValidProduct() {
-    const isValidName = this.$$('[label="Nimi"]').validate()
-    const isValidId = this.$$('[label="Tunnus"]').validate()
+  async isProductValid(id: any, name: any): Promise<boolean> {
+    const isValidName = name.validate()
+    const isValidId = id.validate()
 
-    return isValidName && isValidId
+    const existingItem = await db.get(id.value)
+
+    if (isValidName && isValidId && !!existingItem) {
+      //id.errorMessage = 'Tämä tunnus on jo varattu'
+    }
+
+    return isValidName && isValidId && !existingItem
   },
 
-  createProduct() {
+  async createProduct() {
     const name = this.$$('[label="Nimi"]')
     const id = this.$$('[label="Tunnus"]')
     const price = this.$$('[label="Hinta"]')
     const tax = this.$$('[label="Alv"]')
 
-    if (!name.validate() || !id.validate()) {
-      return false
+    if (await this.isProductValid(id, name)) {
+      db.put({
+        _id: id.value,
+        name: name.value,
+        price: price.value,
+        tax: tax.value,
+        type: 'products'
+      })
     }
-
-    return db.put({
-      _id: id.value,
-      name: name.value,
-      price: price.value,
-      tax: tax.value,
-      type: 'products'
-    })
   }
 } as polymer.Base

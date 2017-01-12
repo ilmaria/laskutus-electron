@@ -1,7 +1,9 @@
 import Storage from './json-storage'
+import { EventEmitter } from 'events'
 
 const storage = new Storage()
 
+export const events = new EventEmitter()
 
 export function all(type: 'clients'): Client[]
 export function all(type: 'products'): Product[]
@@ -28,6 +30,8 @@ export function put(item: DbItem) {
 
   storage.setItem(key, item)
   storage.persist()
+
+  events.emit('db-put', item)
 }
 
 export function putAll(items: DbItem[]) {
@@ -44,6 +48,8 @@ export function putAll(items: DbItem[]) {
   }
 
   storage.persist()
+
+  events.emit('db-putAll', items)
 }
 
 export async function get<T extends DbItem>(id: string): Promise<T> {
@@ -67,4 +73,4 @@ export interface Client {
   type: 'clients'
 }
 
-type DbItem = Product | Client
+export type DbItem = Product | Client
