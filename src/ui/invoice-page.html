@@ -4,37 +4,41 @@
       include="main-styles citric-flames iron-flex">
     </style>
     <style>
-      :root {
-        --primary-color: var(--default-primary-color);
+      :host {
+        display: flex;
+        justify-content: space-between
+      }
+      .right-side {
+        flex: 1;
+      }
+      .left-side {
+        width: 40%;
+        margin-right: 20px;
       }
       #field-editor,
       #filters {
         columns: 250px auto;
       }
-      #filters > div {
+      #filters > div,
+      paper-input {
         -webkit-column-break-inside: avoid;
       }
       #invoice-settings paper-tab {
         width: 150px;
       }
-      paper-input {
-        -webkit-column-break-inside: avoid;
-      }
       vaadin-grid {
         margin-bottom: 10px;
-      }
-      .separator {
-        margin: 5rem;
       }
     </style>
 
     <!-- Invoice editor -->
-    <invoice-editor></invoice-editor>
-
-    <div class="separator"></div>
+    <invoice-editor class="left-side"
+      payment-terms={{paymentTerms}}
+      penalty-interest={{penaltyInterest}}>
+    </invoice-editor>
 
     <!-- Register grid -->
-    <iron-pages id="view" attr-for-selected="id">
+    <iron-pages class="right-side" id="view" attr-for-selected="id">
 
       <div id="register-selection">
         <h2>Et ole valinnut rekisteriä</h2>

@@ -22,8 +22,8 @@ export default {
 
     productList.header.getCell(0, 0).content = 'Tunnus'
     productList.header.getCell(0, 1).content = 'Nimi'
-    productList.header.getCell(0, 2).content = 'Hinta'
-    productList.header.getCell(0, 3).content = 'Alv'
+    productList.header.getCell(0, 2).content = 'Hinta (€)'
+    productList.header.getCell(0, 3).content = 'Alv (%)'
 
     db.events.on('db-put', (item: db.DbItem) => {
       if (item.type === 'products') {

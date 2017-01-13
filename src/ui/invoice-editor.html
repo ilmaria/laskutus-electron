@@ -4,17 +4,34 @@
       include="main-styles citric-flames iron-flex">
     </style>
     <style>
-      paper-card {
-        width: 100%;
+      paper-input {
+        display: inline-block;
+        width: 250px;
+      }
+      paper-textarea {
+        width: 505px;
       }
     </style>
 
-    <paper-card heading="Tuotteen tiedot">
+    <paper-card heading="Uusi lasku">
       <div class="card-content">
-        <paper-input id="payment-terms" label="Maksuehto"
-          value="[[paymentTerms]]"></paper-input>
-        <paper-input id="penalty-interest" label="Viivästyskorko"
-          value="[[penaltyInterest]]"></paper-input>
+        <paper-input
+          id="invoice-date" label="Päiväys"
+          type="date" value="[[today]]">
+        </paper-input>
+        <paper-input
+          id="due-date" label="Eräpäivä"
+          type="date" value="[[today]]">
+        </paper-input>
+        <paper-input
+          id="payment-terms" label="Maksuehto"
+          value="{{paymentTerms}}">
+        </paper-input>
+        <paper-input
+          id="penalty-interest" label="Viivästyskorko"
+          value="{{penaltyInterest}}">
+        </paper-input>
+        <paper-textarea label="Viesti"></paper-textarea>
       </div>
       <div class="card-actions">
         <paper-button raised class="primary" on-tap="createProduct">

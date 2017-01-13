@@ -14,23 +14,8 @@ interface ExcelClient {
   rahoitusvastike: string
 }
 
-const invoiceSettings = config.get('invoiceSettings')
-
 export default {
   is: 'invoice-page',
-
-  properties: {
-    paymentTerms: {
-      type: String,
-      value: invoiceSettings.paymentTerms,
-      readOnly: true
-    },
-    penaltyInterest: {
-      type: String,
-      value: invoiceSettings.penaltyInterest,
-      readOnly: true
-    }
-  },
 
   ready() {
     const grid: VaadinGrid = this.$['register-grid']
@@ -132,8 +117,8 @@ export default {
   getInvoiceData(): invoice.Data {
     return {
       date: new Date().toLocaleDateString(),
-      paymentTerms: this.$['payment-terms'].value,
-      penaltyInterest: this.$['penalty-interest'].value,
+      paymentTerms: this.paymentTerms,
+      penaltyInterest: this.penaltyInterest,
       notes: '',
       products: this.getProductList(),
       dueDate: ''
