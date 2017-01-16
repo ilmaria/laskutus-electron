@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as mkdirp from 'mkdirp'
 
-export default class JsonStorage {
+export default class JsonStorage<T> {
   private storagePath: string
   private storage: any
 
@@ -24,15 +24,19 @@ export default class JsonStorage {
     fs.writeFileSync(this.storagePath, JSON.stringify(jsObject))
   }
 
-  getItem(key: string) {
+  getItem(key: string): T {
     return this.storage[key]
   }
 
-  setItem(key: string, value: any) {
+  setItem(key: string, value: T) {
     this.storage[key] = value
   }
 
-  forEach(callback: (key: string, value: any) => void) {
+  deleteItem(key: string) {
+    delete this.storage[key]
+  }
+
+  forEach(callback: (key: string, value: T) => void) {
     for (const key of Object.keys(this.storage)) {
       callback(key, this.storage[key])
     }

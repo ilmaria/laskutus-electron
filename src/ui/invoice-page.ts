@@ -31,7 +31,7 @@ export default {
         const register = importRegister(registerFile)
         const clients = parseRegister(register)
 
-        db.putAll(clients)
+        db.putClients(clients)
         renderGrid(grid, clients)
 
         this.$['view'].select('register-view')
@@ -57,7 +57,7 @@ export default {
         const register = importRegister(file.path)
         const clients = parseRegister(register)
 
-        db.putAll(clients)
+        db.putClients(clients)
         renderGrid(grid, clients)
 
         config.set('registerFile', file.path)
@@ -161,8 +161,7 @@ function parseRegister(worksheet: xlxs.IWorkSheet): db.Client[] {
         name: client.nimi,
         address: client.lähiosoite,
         postOffice: client.postitoimipaikka,
-        shares: [client.numero],
-        type: 'clients'
+        shares: [client.numero]
       })
     }
   }

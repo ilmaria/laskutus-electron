@@ -15,6 +15,9 @@
         width: 40%;
         margin-right: 20px;
       }
+      vaadin-grid {
+        margin-bottom: 10px;
+      }
     </style>
 
     <div class="left-side">
@@ -28,7 +31,9 @@
       </div>
 
       <!-- Product list -->
-      <vaadin-grid id="product-list"></vaadin-grid>
+      <vaadin-grid id="product-list" size="1" selection-mode="multi"></vaadin-grid>
+
+      <paper-button raised class="error" on-tap="removeProduct">Poista tuote</paper-button>
     </div>
 
   </template>

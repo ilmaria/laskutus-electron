@@ -139,22 +139,25 @@ export function createPdf(client: Client, invoiceData: Data) {
   for (const productItem of products) {
     const product = productItem.product
     const totalPrice = product.price * productItem.count
-    productYCoord = START_Y_COORD + i*25
-    i++
 
-    //name
-    doc.text(`${product.name}, ${product._id}`, MARGIN_LEFT, productYCoord)
-    //à-price
-    doc.text(formatMoney(product.price), PRICE, productYCoord)
-    //count
-    doc.text(productItem.count as any, COUNT_H, productYCoord)
-    //total price without tax
-    doc.text(formatMoney(totalPrice), TAXLESS, productYCoord)
-    //tax
-    doc.text(`${product.tax * 100}%`, TAX, productYCoord)
-    //total price
-    doc.text(formatMoney(totalPrice * (1 + product.tax)), TOTAL,
-      productYCoord, {align: 'right'})
+    for (const share of client.shares) {
+      productYCoord = START_Y_COORD + i*25
+      i++
+
+      //name
+      doc.text(`${product.name}, ${share}`, MARGIN_LEFT, productYCoord)
+      //à-price
+      doc.text(formatMoney(product.price), PRICE, productYCoord)
+      //count
+      doc.text(productItem.count as any, COUNT_H, productYCoord)
+      //total price without tax
+      doc.text(formatMoney(totalPrice), TAXLESS, productYCoord)
+      //tax
+      doc.text(`${product.tax * 100}%`, TAX, productYCoord)
+      //total price
+      doc.text(formatMoney(totalPrice * (1 + product.tax)), TOTAL,
+        productYCoord, {align: 'right'})
+    }
   }
 
   const [totalPrice, totalTax] = products.reduce((total, {product, count}) => {
