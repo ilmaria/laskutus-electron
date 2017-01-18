@@ -44,11 +44,6 @@ export default {
       productList.size = productList.items.length
       productList.refreshItems()
     })
-
-    productList.addEventListener('selected-items-changed', () => {
-      const selected = productList.selection.selected()
-      const products: string[] = selected.map(index => productList.items[index].id)
-    })
   },
 
   removeProduct() {
