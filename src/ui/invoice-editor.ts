@@ -45,12 +45,18 @@ export default {
     ]
 
     productList.items = products
-
     productList.sortOrder = [{ column: 0, direction: 'asc' }]
+    productList.detailedEvents = ['click']
 
     productList.header.getCell(0, 0).content = 'Nimi'
     productList.header.getCell(0, 1).content = 'Hinta (€)'
     productList.header.getCell(0, 2).content = 'Alv (%)'
+
+    productList.rowDetailsGenerator = (rowIndex) => {
+      const div = document.createElement('div')
+      div.innerText = 'hello'
+      return div
+    }
 
     db.events.on('db-put-products', (products: Product[]) => {
       for (const product of products) {
@@ -76,9 +82,20 @@ export default {
 
     productList.addEventListener('selected-items-changed', () => {
       const selected = productList.selection.selected()
-      console.log('change')
 
       this.selectedProducts = selected.map(index => productList.items[index])
+    })
+
+    const openedDetails = new Map<number, boolean>()
+
+    productList.addEventListener('detailed-click', (event: any) => {
+      const rowIndex = event.detail.row
+
+      const isRowOpened = openedDetails.get(rowIndex)
+
+      productList.setRowDetailsVisible(rowIndex, !isRowOpened);
+
+      openedDetails.set(rowIndex, !isRowOpened)
     })
   }
 } as polymer.Base
