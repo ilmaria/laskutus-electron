@@ -48,8 +48,10 @@ export function createPdf(client: Client, invoiceData: Data) {
   const MARGIN_TOP = 40
   const MARGIN_LEFT = 40
   const MARGIN_RIGHT = 612 - 40
-  const DEFAULT_FONT = 12
-  const BIG_FONT = 16
+  const DEFAULT_FONT_SIZE = 12
+  const BIG_FONT_SIZE = 16
+  const DEFAULT_FONT = 'Helvetica'
+  const BOLD_FONT = 'Helvetica-Bold'
 
   const {
     name, address, postOffice, shares
@@ -65,8 +67,10 @@ export function createPdf(client: Client, invoiceData: Data) {
   //-----------------------------------------------
   //TOP INFO
   //-----------------------------------------------
+  doc.font(BOLD_FONT)
   doc.text('LAPPAJÄRVEN LOMA-GOLF OY', MARGIN_LEFT, MARGIN_TOP)
   doc.moveDown(3)
+  doc.font(DEFAULT_FONT)
 
   // Recipient name and address
   doc.text([
@@ -166,12 +170,17 @@ export function createPdf(client: Client, invoiceData: Data) {
     return [total[0] + price, total[1] + tax]
   }, [0, 0])
 
+
+  doc.font(BOLD_FONT)
+
   const TOTAL_Y = productYCoord + 50
   doc.text('Yhteensä:', PRICE, TOTAL_Y)
   doc.text(formatMoney(totalPrice), TAXLESS, TOTAL_Y)
   const finalPrice = formatMoney(totalPrice + totalTax)
   doc.text(finalPrice,
     TOTAL, TOTAL_Y, {align: 'right'})
+
+  doc.font(DEFAULT_FONT)
 
   const MESSAGE = TOTAL_Y + 70
   doc.text(notes, MARGIN_LEFT, MESSAGE)
@@ -194,8 +203,8 @@ export function createPdf(client: Client, invoiceData: Data) {
 
   const RECEIVER_INFO_LEFT = MARGIN_LEFT + 200
 
-  doc.font('Helvetica-Bold')
-    .fontSize(BIG_FONT)
+  doc.font(BOLD_FONT)
+    .fontSize(BIG_FONT_SIZE)
 
   doc.text([
     JSG.name,
@@ -206,8 +215,8 @@ export function createPdf(client: Client, invoiceData: Data) {
   ].join('\n'), RECEIVER_INFO_LEFT, RECEIVER_INFO - 2,
     {paragraphGap: 1})
 
-  doc.font('Helvetica')
-    .fontSize(DEFAULT_FONT)
+  doc.font(DEFAULT_FONT)
+    .fontSize(DEFAULT_FONT_SIZE)
 
 
   //-----------------------------------------------

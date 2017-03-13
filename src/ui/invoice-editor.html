@@ -37,12 +37,13 @@
         <paper-textarea label="Viesti"></paper-textarea>
         <vaadin-grid id="product-selector" selection-mode="multi"></vaadin-grid>
       </div>
-      <div class="card-actions">
-        <paper-button raised class="primary" on-tap="createProduct">
-          Lisää tuote
-        </paper-button>
-      </div>
     </paper-card>
+
+    <!-- Template for product details -->
+    <div id="product-row-details" hidden>
+      <paper-input label="Määrä" type="number" placeholder="0"></paper-input>
+      <paper-checkbox checked style="margin: 2em">Lasku per osake</paper-checkbox>
+    </div>
 
   </template>
 </dom-module>

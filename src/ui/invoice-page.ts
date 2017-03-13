@@ -71,6 +71,7 @@ export default {
      */
     this.$['preview-btn'].addEventListener('click', () => {
       const clients = getSelectedClients(grid)
+
       if (clients.length) {
         ipcRenderer.send('preview-invoice', clients[0], this.getInvoiceData())
       }
@@ -120,17 +121,10 @@ export default {
       paymentTerms: this.paymentTerms,
       penaltyInterest: this.penaltyInterest,
       notes: '',
-      products: this.getProductList(),
+      products: this.selectedProductItems,
       dueDate: ''
     }
-  },
-
-  /**
-   * Add all selected products to the product list.
-   */
-  getProductList(): Array<db.Product> {
-    return []
-  },
+  }
 
 } as polymer.Base
 

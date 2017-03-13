@@ -27,7 +27,7 @@ export default {
       value: invoiceSettings.penaltyInterest,
       notify: true
     },
-    selectedProducts: {
+    selectedProductItems: {
       type: Array,
       value: (): any[] => [],
       notify: true
@@ -52,16 +52,44 @@ export default {
     productList.header.getCell(0, 1).content = 'Hinta (€)'
     productList.header.getCell(0, 2).content = 'Alv (%)'
 
+    // Store extra detail for products in this array
+    let productListExtra = products.map(() => {
+      return {
+        count: 4,
+        perShare: false
+      }
+    })
+
+    // Generate details view for individual product rows
     productList.rowDetailsGenerator = (rowIndex) => {
-      const div = document.createElement('div')
-      div.innerText = 'hello'
-      return div
+      const container = document.createElement('div')
+      container.id = productList.items[rowIndex].id
+      container.style.cssText = 'height: 7em; display: flex'
+
+      const detailsTemplate = this.$['product-row-details']
+      const productDetails = productListExtra[rowIndex]
+
+      let a = detailsTemplate.querySelector('paper-input')
+      a.value = productDetails.count
+      let b = detailsTemplate.querySelector('paper-checkbox')
+      b.checked = productDetails.perShare
+
+      for (let childElem of detailsTemplate.children) {
+        container.appendChild(childElem)
+      }
+
+      return container
     }
 
     db.events.on('db-put-products', (products: Product[]) => {
       for (const product of products) {
         productList.items.push(product)
         productList.size++
+
+        productListExtra.push({
+          count: 0,
+          perShare: false
+        })
       }
     })
 
@@ -73,6 +101,7 @@ export default {
 
         if (ids.includes(product.id)) {
           productList.items.splice(i, 1)
+          productListExtra.splice(i, 1)
         }
       }
 
@@ -83,7 +112,13 @@ export default {
     productList.addEventListener('selected-items-changed', () => {
       const selected = productList.selection.selected()
 
-      this.selectedProducts = selected.map(index => productList.items[index])
+      this.selectedProductItems = selected.map(index => {
+        return {
+          product: productList.items[index],
+          count: productListExtra[index].count,
+          perShare: productListExtra[index].perShare
+        }
+      })
     })
 
     const openedDetails = new Map<number, boolean>()
