@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html lang="fi">
-  <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
 
-    <title>Laskun esikatselu</title>
-    <meta name="description" content="Laskun esikatselu.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <style>
-      body {
-        margin: 0;
-      }
-      webview {
-        display: inline-flex;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-      }
-    </style>
+  <title>Laskun esikatselu</title>
+  <meta name="description" content="Laskun esikatselu.">
 
-  </head>
+  <style>
+    body {
+      margin: 0;
+    }
 
-  <body>
-    <webview id="preview-frame" src=""></webview>
+    webview {
+      display: inline-flex;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    }
+  </style>
 
-    <script src="preview-invoice.js"></script>
-  </body>
+</head>
+
+<body>
+  <webview id="preview-frame" src=""></webview>
+
+  <script>
+    window.exports = {}
+  </script>
+  <script src="preview-invoice.js"></script>
+</body>
+
 </html>

@@ -1,66 +1,70 @@
 <!DOCTYPE html>
 <html lang="fi">
-  <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
 
-    <title>Laskutus.js</title>
-    <meta name="description" content="Laskujen luonti.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script>
-      window.Polymer = {
-        dom: 'shadow',
-        useNativeCSSProperties: true
-      }
-    </script>
+  <title>Laskutus.js</title>
+  <meta name="description" content="Laskujen luonti.">
 
-    <!-- Import all elements -->
-    <link rel="import" href="app.html">
+  <script>
+    window.Polymer = {
+      dom: 'shadow',
+      useNativeCSSProperties: true
+    }
+    window.exports = {}
+  </script>
 
-    <style is="custom-style"
-      include="main-styles citric-flames iron-flex">
-    </style>
-    <style>
-      paper-tab {
-        width: 150px;
-      }
-      main {
-        padding: 10px;
-      }
-    </style>
-  </head>
+  <!-- Import all elements -->
+  <link rel="import" href="app.html">
 
-  <body fullbleed>
-    <template is="dom-bind">
+  <style is="custom-style" include="main-styles citric-flames iron-flex">
 
-      <!-- Nav menu -->
-      <nav>
-        <paper-toolbar>
-          <paper-tabs selected="{{selected-page}}" fallback-selection="0" no-slide>
-            <paper-tab>
-              <h3>Uusi lasku</h3>
-            </paper-tab>
-            <paper-tab>
-              <h3>Tuotteet</h3>
-            </paper-tab>
-            <paper-tab>
-              <h3>Arkisto</h3>
-            </paper-tab>
-          </paper-tabs>
-        </paper-toolbar>
-      </nav>
+  </style>
+  <style>
+    paper-tab {
+      width: 150px;
+    }
 
-      <!-- Page content -->
-      <main>
-        <iron-pages selected="{{selected-page}}">
-          <invoice-page></invoice-page>
-          <product-page></product-page>
-          <archive-page></archive-page>
-        </iron-pages>
-      </main>
+    main {
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body fullbleed>
+  <template is="dom-bind">
+
+    <!-- Nav menu -->
+    <nav>
+      <paper-toolbar>
+        <paper-tabs selected="{{selected-page}}" fallback-selection="0" no-slide>
+          <paper-tab>
+            <h3>Uusi lasku</h3>
+          </paper-tab>
+          <paper-tab>
+            <h3>Tuotteet</h3>
+          </paper-tab>
+          <paper-tab>
+            <h3>Arkisto</h3>
+          </paper-tab>
+        </paper-tabs>
+      </paper-toolbar>
+    </nav>
+
+    <!-- Page content -->
+    <main>
+      <iron-pages selected="{{selected-page}}">
+        <invoice-page></invoice-page>
+        <product-page></product-page>
+        <archive-page></archive-page>
+      </iron-pages>
+    </main>
 
 
-    </template>
-  </body>
+  </template>
+</body>
+
 </html>
