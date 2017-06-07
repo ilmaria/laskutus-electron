@@ -1,42 +1,69 @@
 <dom-module is="invoice-editor">
   <template>
-    <style is="custom-style"
-      include="main-styles citric-flames iron-flex">
+    <style is="custom-style" include="main-styles citric-flames iron-flex">
+
     </style>
     <style>
       paper-input {
         display: inline-block;
         width: 250px;
       }
+
       paper-textarea {
         width: 505px;
       }
+
       #product-selector {
-        height: 300px;
+        min-height: 300px;
+        width: 100%;
+      }
+
+      .product-selector>ul {
+        margin: 0;
+      }
+
+      .product-item {
+        margin: 0 1em;
       }
     </style>
 
     <paper-card heading="Uusi lasku">
       <div class="card-content">
-        <paper-input
-          id="invoice-date" label="Päiväys"
-          type="date" value="[[today]]">
+        <paper-input id="invoice-date" label="Päiväys" type="date" value="[[today]]">
         </paper-input>
-        <paper-input
-          id="due-date" label="Eräpäivä"
-          type="date" value="[[today]]">
+        <paper-input id="due-date" label="Eräpäivä" type="date" value="[[today]]">
         </paper-input>
-        <paper-input
-          id="payment-terms" label="Maksuehto"
-          value="{{paymentTerms}}">
+        <paper-input id="payment-terms" label="Maksuehto" value="{{paymentTerms}}">
         </paper-input>
-        <paper-input
-          id="penalty-interest" label="Viivästyskorko"
-          value="{{penaltyInterest}}">
+        <paper-input id="penalty-interest" label="Viivästyskorko" value="{{penaltyInterest}}">
         </paper-input>
         <paper-textarea label="Viesti"></paper-textarea>
-        <vaadin-grid id="product-selector" selection-mode="multi"></vaadin-grid>
       </div>
+    </paper-card>
+
+    <paper-card id="product-selector">
+      <ul>
+        <template is="dom-repeat" items="[[productItems]]">
+          <li class="product-item">
+            <paper-card style="width: 100%">
+              <div class="card-content">
+                <table>
+                  <tr>
+                    <th>Nimi</th>
+                    <th>Hinta</th>
+                    <th>Alv</th>
+                  </tr>
+                  <tr>
+                    <td>[[item.name]]</td>
+                    <td>[[item.price]]</td>
+                    <td>[[item.tax]]</td>
+                  </tr>
+                </table>
+              </div>
+            </paper-card>
+          </li>
+        </template>
+      </ul>
     </paper-card>
 
     <!-- Template for product details -->

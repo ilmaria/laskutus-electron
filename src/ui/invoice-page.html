@@ -1,41 +1,44 @@
 <dom-module is="invoice-page">
   <template>
-    <style is="custom-style"
-      include="main-styles citric-flames iron-flex">
+    <style is="custom-style" include="main-styles citric-flames iron-flex">
+
     </style>
     <style>
-      :host {
+       :host {
         display: flex;
         justify-content: space-between;
       }
+
       .right-side {
         flex: 1;
       }
+
       .left-side {
         width: 40%;
         margin-right: 20px;
       }
+
       #field-editor,
       #filters {
         columns: 250px auto;
       }
-      #filters > div,
+
+      #filters>div,
       paper-input {
         -webkit-column-break-inside: avoid;
       }
+
       #invoice-settings paper-tab {
         width: 150px;
       }
+
       vaadin-grid {
         margin-bottom: 10px;
       }
     </style>
 
     <!-- Invoice editor -->
-    <invoice-editor class="left-side"
-      payment-terms={{paymentTerms}}
-      penalty-interest={{penaltyInterest}}
-      selected-product-items={{selectedProductItems}}>
+    <invoice-editor class="left-side" payment-terms={{paymentTerms}} penalty-interest={{penaltyInterest}} selected-product-items={{selectedProductItems}}>
     </invoice-editor>
 
     <!-- Register grid -->
@@ -53,63 +56,6 @@
         <paper-button id="preview-btn" raised class="primary">Esikatselu</paper-button>
         <paper-button id="save-btn" raised disabled class="primary">Tallenna</paper-button>
         <paper-button id="save-all-btn" raised class="primary">Tallenna kaikki</paper-button>
-
-        <!-- Settings -
-        <section id="invoice-settings">
-          <paper-toolbar>
-            <paper-tabs selected="{{selected-setting}}" fallback-selection="0" no-slide>
-              <paper-tab>
-                <h4>Filterit</h4>
-              </paper-tab>
-              <paper-tab>
-                <h4>Asetukset</h4>
-              </paper-tab>
-              <paper-tab>
-                <h4>Tab3</h4>
-              </paper-tab>
-            </paper-tabs>
-          </paper-toolbar>
-
-          <iron-pages class="pr2" selected="{{selected-setting}}">
-
-            <!- Filters -
-            <div id="filters">
-
-              <div id="vastike-selector">
-                <h4 class="mb1">Laskutettava vastike</h4>
-                <div class="mb2">
-                  <paper-checkbox id="perusvastike" checked>Perusvastike</paper-checkbox>
-                </div>
-                <div class="mb2">
-                  <paper-checkbox id="käyttövastike">Käyttövastike</paper-checkbox>
-                </div>
-                <div class="mb2">
-                  <paper-checkbox id="rahoitusvastike">Rahoitusvastike</paper-checkbox>
-                </div>
-              </div>
-
-              <div id="vastike-filter">
-                <paper-checkbox id="exclude-rahoitusvastike-ok" checked>
-                  Älä laskuta, jos asiakasrekisterissä vastikesarakkeen arvo on "OK"
-                </paper-checkbox>
-              </div>
-
-            </div>
-
-            <!- Invoice settings -
-            <div id="invoice-settings-tab">
-              <paper-input id="payment-terms" label="Maksuehto"
-                value="[[paymentTerms]]"></paper-input>
-              <paper-input id="penalty-interest" label="Viivästyskorko"
-                value="[[penaltyInterest]]"></paper-input>
-            </div>
-
-          </iron-pages>
-
-        </div>
-
-        </section>
-        -->
 
     </iron-pages>
 

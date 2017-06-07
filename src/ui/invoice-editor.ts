@@ -27,6 +27,11 @@ export default {
       value: invoiceSettings.penaltyInterest,
       notify: true
     },
+    productItems: {
+      type: Array,
+      value: (): Product[] => db.allProducts(),
+      notify: true
+    },
     selectedProductItems: {
       type: Array,
       value: (): any[] => [],
@@ -35,102 +40,102 @@ export default {
   },
 
   ready() {
-    const productList: VaadinGrid = this.$['product-selector']
-    const products = db.allProducts()
+    // {{const productList: VaadinGrid = this.$['product-selector']
+    // const products = db.allProducts()
 
-    productList.columns = [
-      {name: 'name',  resizable: true, sortable: true },
-      {name: 'price', resizable: true, sortable: true },
-      {name: 'tax',   resizable: true, sortable: true }
-    ]
+    // productList.columns = [
+    //   { name: 'name', resizable: true, sortable: true },
+    //   { name: 'price', resizable: true, sortable: true },
+    //   { name: 'tax', resizable: true, sortable: true }
+    // ]
 
-    productList.items = products
-    productList.sortOrder = [{ column: 0, direction: 'asc' }]
-    productList.detailedEvents = ['click']
+    // productList.items = products
+    // productList.sortOrder = [{ column: 0, direction: 'asc' }]
+    // productList.detailedEvents = ['click']
 
-    productList.header.getCell(0, 0).content = 'Nimi'
-    productList.header.getCell(0, 1).content = 'Hinta (€)'
-    productList.header.getCell(0, 2).content = 'Alv (%)'
+    // productList.header.getCell(0, 0).content = 'Nimi'
+    // productList.header.getCell(0, 1).content = 'Hinta (€)'
+    // productList.header.getCell(0, 2).content = 'Alv (%)'
 
-    // Store extra detail for products in this array
-    let productListExtra = products.map(() => {
-      return {
-        count: 4,
-        perShare: false
-      }
-    })
+    // // Store extra detail for products in this array
+    // let productListExtra = products.map(() => {
+    //   return {
+    //     count: 4,
+    //     perShare: false
+    //   }
+    // })
 
-    // Generate details view for individual product rows
-    productList.rowDetailsGenerator = (rowIndex) => {
-      const container = document.createElement('div')
-      container.id = productList.items[rowIndex].id
-      container.style.cssText = 'height: 7em; display: flex'
+    // // Generate details view for individual product rows
+    // productList.rowDetailsGenerator = (rowIndex) => {
+    //   const container = document.createElement('div')
+    //   container.id = productList.items[rowIndex].id
+    //   container.style.cssText = 'height: 7em; display: flex'
 
-      const detailsTemplate = this.$['product-row-details']
-      const productDetails = productListExtra[rowIndex]
+    //   const detailsTemplate = this.$['product-row-details']
+    //   const productDetails = productListExtra[rowIndex]
 
-      let a = detailsTemplate.querySelector('paper-input')
-      a.value = productDetails.count
-      let b = detailsTemplate.querySelector('paper-checkbox')
-      b.checked = productDetails.perShare
+    //   let a = detailsTemplate.querySelector('paper-input')
+    //   a.value = productDetails.count
+    //   let b = detailsTemplate.querySelector('paper-checkbox')
+    //   b.checked = productDetails.perShare
 
-      for (let childElem of detailsTemplate.children) {
-        container.appendChild(childElem)
-      }
+    //   for (let childElem of detailsTemplate.children) {
+    //     container.appendChild(childElem)
+    //   }
 
-      return container
-    }
+    //   return container
+    // }
 
-    db.events.on('db-put-products', (products: Product[]) => {
-      for (const product of products) {
-        productList.items.push(product)
-        productList.size++
+    // db.events.on('db-put-products', (products: Product[]) => {
+    //   for (const product of products) {
+    //     productList.items.push(product)
+    //     productList.size++
 
-        productListExtra.push({
-          count: 0,
-          perShare: false
-        })
-      }
-    })
+    //     productListExtra.push({
+    //       count: 0,
+    //       perShare: false
+    //     })
+    //   }
+    // })
 
-    db.events.on('db-remove-products', (ids: string[]) => {
-      let i = productList.items.length
+    // db.events.on('db-remove-products', (ids: string[]) => {
+    //   let i = productList.items.length
 
-      while (i-- > 0) {
-        const product = productList.items[i]
+    //   while (i-- > 0) {
+    //     const product = productList.items[i]
 
-        if (ids.includes(product.id)) {
-          productList.items.splice(i, 1)
-          productListExtra.splice(i, 1)
-        }
-      }
+    //     if (ids.includes(product.id)) {
+    //       productList.items.splice(i, 1)
+    //       productListExtra.splice(i, 1)
+    //     }
+    //   }
 
-      productList.size = productList.items.length
-      productList.refreshItems()
-    })
+    //   productList.size = productList.items.length
+    //   productList.refreshItems()
+    // })
 
-    productList.addEventListener('selected-items-changed', () => {
-      const selected = productList.selection.selected()
+    // productList.addEventListener('selected-items-changed', () => {
+    //   const selected = productList.selection.selected()
 
-      this.selectedProductItems = selected.map(index => {
-        return {
-          product: productList.items[index],
-          count: productListExtra[index].count,
-          perShare: productListExtra[index].perShare
-        }
-      })
-    })
+    //   this.selectedProductItems = selected.map(index => {
+    //     return {
+    //       product: productList.items[index],
+    //       count: productListExtra[index].count,
+    //       perShare: productListExtra[index].perShare
+    //     }
+    //   })
+    // })
 
-    const openedDetails = new Map<number, boolean>()
+    // const openedDetails = new Map<number, boolean>()
 
-    productList.addEventListener('detailed-click', (event: any) => {
-      const rowIndex = event.detail.row
+    // productList.addEventListener('detailed-click', (event: any) => {
+    //   const rowIndex = event.detail.row
 
-      const isRowOpened = openedDetails.get(rowIndex)
+    //   const isRowOpened = openedDetails.get(rowIndex)
 
-      productList.setRowDetailsVisible(rowIndex, !isRowOpened);
+    //   productList.setRowDetailsVisible(rowIndex, !isRowOpened);
 
-      openedDetails.set(rowIndex, !isRowOpened)
-    })
+    //   openedDetails.set(rowIndex, !isRowOpened)
+    // })}}
   }
 } as polymer.Base

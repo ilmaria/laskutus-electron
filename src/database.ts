@@ -6,6 +6,20 @@ const clientStorage = new Map<string, Client>()
 const _UUID = new Map<string, number>()
 export const events = new EventEmitter()
 
+export interface Product {
+  id: string
+  name: string
+  price: number
+  tax: number
+}
+
+export interface Client {
+  name: string
+  address: string
+  postOffice: string
+  shares: string[]
+}
+
 let labels: any = {}
 
 productStorage.forEach((key) => {
@@ -121,19 +135,3 @@ export function removeClients(names: string[]) {
 
   events.emit('db-remove-clients', names)
 }
-
-
-export interface Product {
-  id: string
-  name: string
-  price: number
-  tax: number
-}
-
-export interface Client {
-  name: string
-  address: string
-  postOffice: string
-  shares: string[]
-}
-
