@@ -6,19 +6,6 @@ import config from './config'
 import * as db from './database'
 import { Client, Product } from './database'
 
-/*
-export const fieldNames = [
-  'nimi',
-  'lähiosoite',
-  'postitoimipaikka',
-  'päiväys',
-  'laskunumero',
-  'eräpäivä',
-  'maksuehto',
-  'viivästyskorko',
-  'numero',
-  'viesti'
-]*/
 
 export interface Data {
   date: string
@@ -33,15 +20,14 @@ export interface Data {
   }[]
 }
 
-
 /**
  * Create an invoice PDF in memory. Pipe it to a file stream to save it.
  * @param {Client} client - Client info that differs between clients.
  * @param {Data} invoiceData - Data that is shared between multiple clients.
  */
 export function createPdf(client: Client, invoiceData: Data) {
-  const doc = new PDFDocument({autoFirstPage: false})
-  doc.addPage({margin: 40})
+  const doc = new PDFDocument({ autoFirstPage: false })
+  doc.addPage({ margin: 40 })
 
   const JSG = config.get('JSG')
 
@@ -65,7 +51,7 @@ export function createPdf(client: Client, invoiceData: Data) {
   const invoiceNumber = '123644'
 
   //-----------------------------------------------
-  //TOP INFO
+  // TOP INFO
   //-----------------------------------------------
   doc.font(BOLD_FONT)
   doc.text('LAPPAJÄRVEN LOMA-GOLF OY', MARGIN_LEFT, MARGIN_TOP)
@@ -101,12 +87,12 @@ export function createPdf(client: Client, invoiceData: Data) {
     paymentTerms,
     penaltyInterest
   ].join('\n'), 315, MARGIN_TOP, {
-    align: 'right'
-  })
+      align: 'right'
+    })
 
 
   //-----------------------------------------------
-  //PRODUCT HEADERS
+  // PRODUCT HEADERS
   //-----------------------------------------------
   const PRODUCT_LIST_HEADER = 250
   const PRICE_H = 250
@@ -135,17 +121,17 @@ export function createPdf(client: Client, invoiceData: Data) {
 
 
   //-----------------------------------------------
-  //PRODUCT LIST
+  // PRODUCT LIST
   //-----------------------------------------------
   const START_Y_COORD = HEADER_DASH + 7
-  let productYCoord
+  let productYCoord = START_Y_COORD
   let i = 0
   for (const productItem of products) {
     const product = productItem.product
     const totalPrice = product.price * productItem.count
 
     for (const share of client.shares) {
-      productYCoord = START_Y_COORD + i*25
+      productYCoord = START_Y_COORD + i * 25
       i++
 
       //name
@@ -160,11 +146,11 @@ export function createPdf(client: Client, invoiceData: Data) {
       doc.text(`${product.tax * 100}%`, TAX, productYCoord)
       //total price
       doc.text(formatMoney(totalPrice * (1 + product.tax)), TOTAL,
-        productYCoord, {align: 'right'})
+        productYCoord, { align: 'right' })
     }
   }
 
-  const [totalPrice, totalTax] = products.reduce((total, {product, count}) => {
+  const [totalPrice, totalTax] = products.reduce((total, { product, count }) => {
     const price = product.price * count
     const tax = price * product.tax
     return [total[0] + price, total[1] + tax]
@@ -178,7 +164,7 @@ export function createPdf(client: Client, invoiceData: Data) {
   doc.text(formatMoney(totalPrice), TAXLESS, TOTAL_Y)
   const finalPrice = formatMoney(totalPrice + totalTax)
   doc.text(finalPrice,
-    TOTAL, TOTAL_Y, {align: 'right'})
+    TOTAL, TOTAL_Y, { align: 'right' })
 
   doc.font(DEFAULT_FONT)
 
@@ -187,7 +173,7 @@ export function createPdf(client: Client, invoiceData: Data) {
 
 
   //-----------------------------------------------
-  //PAYMENT INFO
+  // PAYMENT INFO
   //-----------------------------------------------
   const RECEIVER_INFO = 550
   const viitenumero = '0020998'
@@ -199,7 +185,7 @@ export function createPdf(client: Client, invoiceData: Data) {
     'Eräpäivä / Förfallodag:',
     'Maksu / Betalningen:'
   ].join('\n'), MARGIN_LEFT, RECEIVER_INFO,
-    {paragraphGap: 6})
+    { paragraphGap: 6 })
 
   const RECEIVER_INFO_LEFT = MARGIN_LEFT + 200
 
@@ -213,14 +199,14 @@ export function createPdf(client: Client, invoiceData: Data) {
     dueDate,
     finalPrice
   ].join('\n'), RECEIVER_INFO_LEFT, RECEIVER_INFO - 2,
-    {paragraphGap: 1})
+    { paragraphGap: 1 })
 
   doc.font(DEFAULT_FONT)
     .fontSize(DEFAULT_FONT_SIZE)
 
 
   //-----------------------------------------------
-  //FOOTER
+  // FOOTER
   //-----------------------------------------------
   const FOOTER = 700
   doc.lineWidth(1)
@@ -230,13 +216,13 @@ export function createPdf(client: Client, invoiceData: Data) {
     .stroke()
 
   doc.text(JSG.name, MARGIN_LEFT, FOOTER + 5,
-      {continued: true})
+    { continued: true })
     .text(`Y-tunnus: ${JSG.yTunnus}`,
-      {align: 'right'})
+    { align: 'right' })
 
   doc.text(`Puh. ${JSG.tel}`, MARGIN_LEFT, FOOTER + 5,
-      {align: 'center'})
-    .text(JSG.email, {align: 'center'})
+    { align: 'center' })
+    .text(JSG.email, { align: 'center' })
     .moveUp()
     .text(JSG.address)
     .text(JSG.postalAddress)
@@ -254,8 +240,8 @@ export function createPdf(client: Client, invoiceData: Data) {
  * @param {string} dir - Directory to save invoice files.
  */
 export function savePdf(clients: Client[],
-                        invoiceData: Data,
-                        dir: string) {
+  invoiceData: Data,
+  dir: string) {
   try {
     fs.accessSync(dir, fs.constants.F_OK)
   } catch (e) {

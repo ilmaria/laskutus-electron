@@ -14,8 +14,9 @@
       }
 
       #product-selector {
-        min-height: 300px;
+        min-height: 125px;
         width: 100%;
+        margin-top: 1rem;
       }
 
       .product-selector>ul {
@@ -24,6 +25,51 @@
 
       .product-item {
         margin: 0 1em;
+      }
+
+      .product-item>paper-card {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      .product-row-extra paper-input {
+        width: 50px;
+        margin-right: 2em;
+      }
+
+      .product-row-details,
+      .product-row-extra {
+        display: inline-block;
+        width: 44%;
+      }
+
+      .product-row-details>div {
+        display: inline-block;
+        width: 23%;
+      }
+
+      .product-row-details h4 {
+        margin-bottom: 0.5em;
+        font-weight: bold;
+        font-size: 1em;
+      }
+
+      .selector-checkbox {
+        display: inline-block;
+        width: 10%;
+      }
+
+      .selector-checkbox p {
+        margin: 0.4em 0;
+        font-weight: bold;
+      }
+
+      .selector-checkbox paper-checkbox {
+        --paper-checkbox-size: 24px;
+      }
+
+      .empty-list-info {
+        margin: 1em;
       }
     </style>
 
@@ -42,35 +88,45 @@
     </paper-card>
 
     <paper-card id="product-selector">
+      <div class="empty-list-info" hidden$="{{noProductItems}}">
+        Sinulla ei ole yhtään tuotetta valittavana. Lisää tuotteet ensin "Tuotteet" välilehdessä, jotta ne tulevat tähän valittaviksi.
+      </div>
       <ul>
         <template is="dom-repeat" items="[[productItems]]">
           <li class="product-item">
-            <paper-card style="width: 100%">
+            <paper-card>
               <div class="card-content">
-                <table>
-                  <tr>
-                    <th>Nimi</th>
-                    <th>Hinta</th>
-                    <th>Alv</th>
-                  </tr>
-                  <tr>
-                    <td>[[item.name]]</td>
-                    <td>[[item.price]]</td>
-                    <td>[[item.tax]]</td>
-                  </tr>
-                </table>
+
+                <div class="selector-checkbox">
+                  <p>Valitse</p>
+                  <paper-checkbox title="Lisää tuote laskuun"></paper-checkbox>
+                </div>
+                <div class="product-row-details">
+                  <div style="width: 50%">
+                    <h4>Nimi</h4>
+                    <h4>[[item.name]]</h4>
+                  </div>
+                  <div>
+                    <h4>Hinta</h4>
+                    <div>[[item.price]]€</div>
+                  </div>
+                  <div>
+                    <h4>Alv</h4>
+                    <div>[[item.tax]]%</div>
+                  </div>
+                </div>
+                <div class="product-row-extra">
+                  <paper-input label="Määrä" type="number" placeholder="0"></paper-input>
+                  <paper-checkbox checked title="Valitse tämä, jos kyseinen tuote koskee jokaista asiakkaan osaketta erikseen.">
+                    Lasku per osake
+                  </paper-checkbox>
+                </div>
               </div>
             </paper-card>
           </li>
         </template>
       </ul>
     </paper-card>
-
-    <!-- Template for product details -->
-    <div id="product-row-details" hidden>
-      <paper-input label="Määrä" type="number" placeholder="0"></paper-input>
-      <paper-checkbox checked style="margin: 2em">Lasku per osake</paper-checkbox>
-    </div>
 
   </template>
 </dom-module>

@@ -36,6 +36,10 @@ export default {
       type: Array,
       value: (): any[] => [],
       notify: true
+    },
+    noProductItems: {
+      type: Boolean,
+      computed: '_noProductItems(productItems)'
     }
   },
 
@@ -137,5 +141,8 @@ export default {
 
     //   openedDetails.set(rowIndex, !isRowOpened)
     // })}}
-  }
+  },
+
+  _noProductItems: (items: any) => items.length > 0
+
 } as polymer.Base
